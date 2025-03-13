@@ -38,10 +38,10 @@ abstract class GitHubUpdater(
 
     override fun runPatch() {
         val args = ArrayList<String>()
-        // TODO : Add launcher
+        // TODO @important: Add launcher
         args.add(Paths.get(updaterConfig.tempDirectory).resolve(updaterConfig.patchTarget).toString())
         args.add("patch")
-        // TODO : Unlock
+        // TODO @important: Unlock
         val processBuilder = ProcessBuilder(args)
         processBuilder.start()
     }

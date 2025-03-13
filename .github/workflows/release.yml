@@ -34,22 +34,23 @@ jobs:
       #        run: sudo apt-get install -y fakeroot
 
       - name: Create app-image using jpackage
-        shell: bash
+        shell: powershell
         run: |
           mkdir -p dist
-          jpackage \
-            --input target/jar \
-            --name MyApp \
-            --main-jar JUpdater.jar \
-            --main-class io.github.zmilla93.MainKt \
-            --type app-image \
-            --dest dist \
+          jpackage ^
+            --input target/jar ^
+            --name MyApp ^
+            --main-jar JUpdater.jar ^
+            --main-class io.github.zmilla93.MainKt ^
+            --type app-image ^
+            --dest dist ^
 
       - name: Zip the app-image
         run: |
           cd dist
-          zip -r MyApp.zip MyApp
-          mv MyApp.zip ..
+          Compress-Archive -Path dist/* -Destination MyApp.zip
+#          zip -r MyApp.zip MyApp
+          move MyApp.zip ..
 
       - name: Upload artifact (for debugging)
         uses: ncipollo/release-action@v1

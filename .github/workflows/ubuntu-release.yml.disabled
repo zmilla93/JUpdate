@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     permissions: write-all
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -36,13 +36,13 @@ jobs:
       - name: Create app-image using jpackage
         run: |
           mkdir -p dist
-          jpackage ^
-            --input target/jar ^
-            --name MyApp ^
-            --main-jar JUpdater.jar ^
-            --main-class io.github.zmilla93.MainKt ^
-            --type app-image ^
-            --dest dist ^
+          jpackage \
+            --input target/jar \
+            --name MyApp \
+            --main-jar JUpdater.jar \
+            --main-class io.github.zmilla93.MainKt \
+            --type app-image \
+            --dest dist \
       #            --java-options '--enable-preview'
 
       - name: Zip the app-image

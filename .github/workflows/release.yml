@@ -27,8 +27,9 @@ jobs:
             maven-${{ runner.os }}-
 
       - name: Build with Maven
-        run: mvn clean compile assembly:single
-
+        run: |
+          mvn clean compile assembly:single
+          mv target/jar/JUpdater.jar ..
 #      - name: Install jpackage (for Linux)
 #        run: sudo apt-get install -y fakeroot
 

@@ -43,7 +43,7 @@ jobs:
             --main-jar JUpdater.jar ^
             --main-class io.github.zmilla93.MainKt ^
             --type app-image ^
-            --dest dist ^
+            --dest dist
 
       - name: Zip the app-image
         run: |

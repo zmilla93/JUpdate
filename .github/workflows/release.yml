@@ -29,21 +29,20 @@ jobs:
       - name: Build with Maven
         run: |
           mvn clean compile assembly:single
-          mv target/jar/JUpdater.jar ..
-#      - name: Install jpackage (for Linux)
-#        run: sudo apt-get install -y fakeroot
+      #      - name: Install jpackage (for Linux)
+      #        run: sudo apt-get install -y fakeroot
 
       - name: Create app-image using jpackage
         run: |
           mkdir -p dist
           jpackage \
-            --input jar \
+            --input target/jar \
             --name MyApp \
             --main-jar JUpdater.jar \
             --main-class io.github.zmilla93.MainKt \
             --type app-image \
             --dest dist \
-#            --java-options '--enable-preview'
+      #            --java-options '--enable-preview'
 
       - name: Zip the app-image
         run: |
@@ -51,11 +50,11 @@ jobs:
           zip -r MyApp.zip MyApp
           mv MyApp.zip ..
 
-#      - name: Upload artifact (for debugging)
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: app-image
-#          path: MyApp.zip
+  #      - name: Upload artifact (for debugging)
+  #        uses: actions/upload-artifact@v3
+  #        with:
+  #          name: app-image
+  #          path: MyApp.zip
 
   release:
     needs: build

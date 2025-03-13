@@ -36,7 +36,7 @@ jobs:
       - name: Create app-image using jpackage
         run: |
           powershell
-          mkdir -p dist
+          mkdir -p dist ^
           jpackage ^
             --input target/jar ^
             --name MyApp ^

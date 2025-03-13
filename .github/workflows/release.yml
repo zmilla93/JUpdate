@@ -30,7 +30,7 @@ jobs:
       - name: Build with Maven
         run: |
           mvn compile assembly:single
-          move target/jar/JUpdater.jar
+          move target/jar/JUpdater.jar ..
       #      - name: Install jpackage (for Linux)
       #        run: sudo apt-get install -y fakeroot
 

@@ -32,12 +32,27 @@ abstract class GitHubUpdater(
         )
     }
 
-    override fun unpack(): Boolean {
-        TODO("Not yet implemented")
+//    override fun unpack(): Boolean {
+//        TODO("Not yet implemented")
+//    }
+
+    override fun runPatch() {
+        val args = ArrayList<String>()
+        // TODO : Add launcher
+        args.add(Paths.get(updaterConfig.tempDirectory).resolve(updaterConfig.patchTarget).toString())
+        args.add("patch")
+        // TODO : Unlock
+        val processBuilder = ProcessBuilder(args)
+        processBuilder.start()
     }
 
     override fun patch(): Boolean {
 //        updaterConfig.patchTarget
+        return true
+    }
+
+    override fun runClean() {
+        TODO("Not yet implemented")
     }
 
     override fun clean(): Boolean {

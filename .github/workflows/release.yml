@@ -47,9 +47,7 @@ jobs:
 
       - name: Zip the app-image
         run: |
-          cd dist
           Compress-Archive -Path dist/* -Destination MyApp.zip
-#          zip -r MyApp.zip MyApp
           move MyApp.zip ..
 
       - name: Upload artifact (for debugging)

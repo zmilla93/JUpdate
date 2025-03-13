@@ -50,11 +50,11 @@ jobs:
           zip -r MyApp.zip MyApp
           mv MyApp.zip ..
 
-  #      - name: Upload artifact (for debugging)
-  #        uses: actions/upload-artifact@v3
-  #        with:
-  #          name: app-image
-  #          path: MyApp.zip
+      - name: Upload artifact (for debugging)
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-image
+          path: MyApp.zip
 
   release:
     needs: build

@@ -34,15 +34,15 @@ jobs:
       #        run: sudo apt-get install -y fakeroot
 
       - name: Create app-image using jpackage
-        shell: powershell
+        shell: bash
         run: |
           mkdir -p dist
-          jpackage ^
-            --input target/jar ^
-            --name MyApp ^
-            --main-jar JUpdater.jar ^
-            --main-class io.github.zmilla93.MainKt ^
-            --type app-image ^
+          jpackage \
+            --input target/jar \
+            --name MyApp \
+            --main-jar JUpdater.jar \
+            --main-class io.github.zmilla93.MainKt \
+            --type app-image \
             --dest dist
 
       - name: Zip the app-image

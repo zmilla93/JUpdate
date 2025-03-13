@@ -35,6 +35,7 @@ jobs:
 
       - name: Create app-image using jpackage
         run: |
+          powershell
           mkdir -p dist
           jpackage ^
             --input target/jar ^
@@ -42,8 +43,7 @@ jobs:
             --main-jar JUpdater.jar ^
             --main-class io.github.zmilla93.MainKt ^
             --type app-image ^
-            --dest dist ^
-      #            --java-options '--enable-preview'
+            --dest dist
 
       - name: Zip the app-image
         run: |

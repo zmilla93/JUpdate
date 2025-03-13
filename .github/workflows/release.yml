@@ -34,9 +34,10 @@ jobs:
       #        run: sudo apt-get install -y fakeroot
 
       - name: Create app-image using jpackage
+        shell: bash
         run: |
           powershell
-          mkdir -p dist ^
+          mkdir -p dist
           jpackage ^
             --input target/jar ^
             --name MyApp ^

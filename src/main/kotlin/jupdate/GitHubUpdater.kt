@@ -37,7 +37,7 @@ abstract class GitHubUpdater(
     }
 
     override fun patch(): Boolean {
-        TODO("Not yet implemented")
+//        updaterConfig.patchTarget
     }
 
     override fun clean(): Boolean {

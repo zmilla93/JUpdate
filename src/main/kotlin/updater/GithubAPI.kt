@@ -143,6 +143,7 @@ class GithubAPI(
             outputStream.close();
             for (listener in progressListeners)
                 SwingUtilities.invokeLater(listener::onDownloadComplete);
+            logger.info("File downloaded successfully!")
             return true;
         } catch (e: IOException) {
             logger.error("Error downloading file: $source");

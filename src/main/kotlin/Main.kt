@@ -38,6 +38,5 @@ fun main() {
     val updater = WindowsPortableUpdater("zmilla93", "SlimTrade", version, updaterConfig)
     println("Update available: ${updater.isUpdateAvailable()}")
 //    if (updater.isUpdateAvailable())
-    updater
     updater.download()
 }

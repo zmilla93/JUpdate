@@ -4,8 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Represents a version of the current program.
- * Format is "1.2.3-pre4", where the "-pre" suffix is optional.
+ * Represents a "Major.Minor.Patch" program version, with an optional "-pre#" suffix.
+ * Examples : "5.4.3", "1.2.3-pre4", "4.241.5190"
  */
 public class AppVersion implements Comparable<AppVersion> {
 
@@ -15,9 +15,9 @@ public class AppVersion implements Comparable<AppVersion> {
 
     // Internal
     private String string;
-    private final int major;
-    private final int minor;
-    private final int patch;
+    public final int major;
+    public final int minor;
+    public final int patch;
     private final int pre;
 
     // Matching

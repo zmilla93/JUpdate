@@ -17,4 +17,8 @@ class GitHubRelease {
     var mentions_count = ""
     var assets = emptyArray<GitHubAsset>()
 
+    fun findAssetByName(name: String): GitHubAsset? {
+        return assets.find { it.name == name }
+    }
+
 }

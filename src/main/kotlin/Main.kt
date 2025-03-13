@@ -1,7 +1,8 @@
 package io.github.zmilla93
 
 import io.github.zmilla93.gui.MainFrame
-import io.github.zmilla93.updater.GithubInterface
+import io.github.zmilla93.jupdate.GitHubUpdaterConfig
+import io.github.zmilla93.jupdate.WindowsPortableUpdater
 import io.github.zmilla93.updater.ProjectProperties
 import updater.UpdateManager
 import updater.data.AppInfo
@@ -29,6 +30,14 @@ fun main() {
     )
 //    val updateAvailable = updateManger.isUpdateAvailable
 //    println("update: " + updateAvailable)
-    val github = GithubInterface("zmilla93", "SlimTrade");
-    github.fetchData()
+//    val github = GithubAPI("zmilla93", "SlimTrade", false);
+//    println("Latest Release: ${github.latestRelease()!!.name}")
+//    println("Latest Release: ${github.latestRelease()!!.tag_name}")
+    val tempDir = "C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp"
+    val updaterConfig = GitHubUpdaterConfig("SlimTrade.jar", "SlimTrade.jar", tempDir)
+    val updater = WindowsPortableUpdater("zmilla93", "SlimTrade", version, updaterConfig)
+    println("Update available: ${updater.isUpdateAvailable()}")
+//    if (updater.isUpdateAvailable())
+    updater
+    updater.download()
 }

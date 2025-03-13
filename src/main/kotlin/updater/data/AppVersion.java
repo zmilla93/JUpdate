@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 /**
  * Represents a version of the current program.
+ * Format is "1.2.3-pre4", where the "-pre" suffix is optional.
  */
 public class AppVersion implements Comparable<AppVersion> {
 

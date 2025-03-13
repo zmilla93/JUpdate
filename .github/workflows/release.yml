@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build & Release
 
 on:
   push:
@@ -45,10 +45,9 @@ jobs:
             --dest dist
 
       - name: Zip the app-image
-        run: |
-          Compress-Archive -Path dist/* -Destination MyApp.zip
+        run: Compress-Archive -Path dist/* -Destination MyApp.zip
 
-      - name: Upload artifact (for debugging)
+      - name: Create release
         uses: ncipollo/release-action@v1
         with:
           name: app-image

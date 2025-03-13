@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import updater.data.AppInfo;
 import updater.data.AppVersion;
-import updater.data.ReleaseVersion;
+import updater.github.OLD_GitHubRelease;
 
 import javax.swing.*;
 import java.io.*;
@@ -57,7 +57,7 @@ public class UpdateManager {
     private final boolean VALID_DIRECTORY;
 
     private boolean updateAvailable;
-    private ReleaseVersion latestRelease;
+    private OLD_GitHubRelease latestRelease;
     private final boolean allowPreRelease;
     private String launchPath;
     private UpdateAction currentAction = UpdateAction.NONE;
@@ -75,9 +75,9 @@ public class UpdateManager {
      * @param directory Directory where downloaded file will be stored temporarily
      * @param appInfo   Information about the currently running app
      */
-    // FIXME: Switch to using Path
     public UpdateManager(String author, String repo, Path directory, AppInfo appInfo, boolean allowPreRelease) {
 //        this.DIRECTORY = directory;
+        // FIXME : Just store app version?
         this.CURRENT_VERSION = appInfo.appVersion;
         this.allowPreRelease = allowPreRelease;
         tempJarFile = directory.resolve(TEMP_FILE_NAME);
@@ -221,21 +221,21 @@ public class UpdateManager {
         }
     }
 
-    private ReleaseVersion fetchLatestRelease() {
+    private OLD_GitHubRelease fetchLatestRelease() {
         JsonElement json = fetchDataFromGitHub(LATEST_VERSION_URL);
         if (json == null) return null;
-        return new ReleaseVersion(json);
+        return new OLD_GitHubRelease(json);
     }
 
-    public ReleaseVersion fetchLatestReleaseFromAll() {
+    public OLD_GitHubRelease fetchLatestReleaseFromAll() {
         JsonElement json = fetchDataFromGitHub(ALL_RELEASES_URL);
         if (json == null) return null;
         JsonArray array = json.getAsJsonArray();
-        ArrayList<ReleaseVersion> versions = new ArrayList<>();
+        ArrayList<OLD_GitHubRelease> versions = new ArrayList<>();
         for (JsonElement entry : array) {
-            ReleaseVersion releaseVersion = new ReleaseVersion(entry);
-            if (!releaseVersion.appVersion.valid) continue;
-            versions.add(releaseVersion);
+            OLD_GitHubRelease gitHubRelease = new OLD_GitHubRelease(entry);
+            if (!gitHubRelease.appVersion.valid) continue;
+            versions.add(gitHubRelease);
         }
         Collections.sort(versions);
         return versions.get(versions.size() - 1);
@@ -307,7 +307,7 @@ public class UpdateManager {
         }
     }
 
-    public ReleaseVersion getLatestRelease() {
+    public OLD_GitHubRelease getLatestRelease() {
         return latestRelease;
     }
 

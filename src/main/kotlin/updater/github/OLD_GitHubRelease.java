@@ -1,12 +1,13 @@
-package updater.data;
+package updater.github;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import updater.data.AppVersion;
 
 /**
  * Represents a GitHub release.
  */
-public class ReleaseVersion implements Comparable<ReleaseVersion> {
+public class OLD_GitHubRelease implements Comparable<OLD_GitHubRelease> {
 
     public final AppVersion appVersion;
     public final String tag;
@@ -15,7 +16,7 @@ public class ReleaseVersion implements Comparable<ReleaseVersion> {
     public final String body;
     public final boolean preRelease;
 
-    public ReleaseVersion(String tag, String fileName, String url, String body, boolean preRelease) {
+    public OLD_GitHubRelease(String tag, String fileName, String url, String body, boolean preRelease) {
         this.tag = tag;
         this.appVersion = new AppVersion(tag);
         this.fileName = fileName;
@@ -24,11 +25,11 @@ public class ReleaseVersion implements Comparable<ReleaseVersion> {
         this.preRelease = preRelease;
     }
 
-    public ReleaseVersion(JsonElement json) {
+    public OLD_GitHubRelease(JsonElement json) {
         this(json.getAsJsonObject());
     }
 
-    public ReleaseVersion(JsonObject json) {
+    public OLD_GitHubRelease(JsonObject json) {
         tag = json.get("tag_name").getAsString();
         appVersion = new AppVersion(tag);
         JsonObject asset = json.getAsJsonArray("assets").get(0).getAsJsonObject();
@@ -39,7 +40,7 @@ public class ReleaseVersion implements Comparable<ReleaseVersion> {
     }
 
     @Override
-    public int compareTo(ReleaseVersion other) {
+    public int compareTo(OLD_GitHubRelease other) {
         return appVersion.compareTo(other.appVersion);
     }
 

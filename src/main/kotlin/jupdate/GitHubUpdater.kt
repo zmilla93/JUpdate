@@ -53,6 +53,8 @@ abstract class GitHubUpdater(
         args.add("patch")
         // TODO @important: Unlock
         val processBuilder = ProcessBuilder(args)
+        processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+        processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
         processBuilder.redirectOutput()
         processBuilder.start()
         exitProcess(0)
@@ -72,7 +74,8 @@ abstract class GitHubUpdater(
         args.add("clean")
         // TODO @important: Unlock
         val processBuilder = ProcessBuilder(args)
-        processBuilder.redirectOutput()
+        processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+        processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
         processBuilder.start()
         exitProcess(0)
     }

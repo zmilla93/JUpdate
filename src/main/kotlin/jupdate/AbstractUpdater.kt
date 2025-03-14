@@ -26,11 +26,11 @@ abstract class AbstractUpdater {
     fun handleUpdateProcess(args: Array<String>) {
         val existingLauncherArg = args.find { it.startsWith(LAUNCHER_PREFIX) }
         if (existingLauncherArg != null) {
+            launcherPathArg = existingLauncherArg
             launcherPath = existingLauncherArg.replaceFirst(LAUNCHER_PREFIX, "")
-            launcherPathArg = LAUNCHER_PREFIX + launcherPath;
-        }
-        else {
+        } else {
             launcherPath = getLaunchPath()
+            launcherPathArg = LAUNCHER_PREFIX + launcherPath;
             isLauncher = true
         }
         if (launcherPath == null) return

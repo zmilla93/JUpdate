@@ -2,13 +2,16 @@ package io.github.zmilla93.jupdate
 
 import io.github.zmilla93.updater.GithubAPI
 import updater.data.AppVersion
+import java.io.IOException
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 import kotlin.system.exitProcess
 
 abstract class GitHubUpdater(
     author: String,
     repo: String,
     private val currentVersion: AppVersion,
-    val updaterConfig: UpdaterConfig,
+    val config: UpdaterConfig,
     allowPreReleases: Boolean = false
 ) : AbstractUpdater() {
 
@@ -27,13 +30,13 @@ abstract class GitHubUpdater(
 
     override fun download(): Boolean {
         if (github.latestRelease() == null) return false
-        if (updaterConfig.assetNames.isEmpty()) throw RuntimeException("No download targets specified.")
-        for (assetName in updaterConfig.assetNames) {
+        if (config.assetNames.isEmpty()) throw RuntimeException("No download targets specified.")
+        for (assetName in config.assetNames) {
             val asset = github.latestRelease()!!.findAssetByName(assetName)
             if (asset == null) return false
             val success = github.downloadFile(
                 asset.browser_download_url,
-                updaterConfig.tempDirectory.resolve(assetName)
+                config.tempDirectory.resolve(assetName)
             )
             if (!success) return false
         }
@@ -49,7 +52,7 @@ abstract class GitHubUpdater(
         // TODO @important: Add launcher
         args.add("java")
         args.add("-jar")
-        args.add(updaterConfig.tempDirectory.resolve(updaterConfig.patcherFileName).toString())
+        args.add(config.tempDirectory.resolve(config.patcherFileName).toString())
         args.add(launcherPathArg!!)
         args.add("patch")
         // TODO @important: Unlock
@@ -85,7 +88,19 @@ abstract class GitHubUpdater(
     }
 
     override fun clean(): Boolean {
-        // FIXME : implement this
+        Files.walkFileTree(config.tempDirectory, object : SimpleFileVisitor<Path>() {
+            @Throws(IOException::class)
+            override fun postVisitDirectory(dir: Path, exc: IOException): FileVisitResult {
+                Files.delete(dir)
+                return FileVisitResult.CONTINUE
+            }
+
+            @Throws(IOException::class)
+            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+                Files.delete(file)
+                return FileVisitResult.CONTINUE
+            }
+        })
         return true
     }
 

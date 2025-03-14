@@ -34,5 +34,5 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     val updater = JarUpdater("zmilla93", "JUpdate", currentVersion, jarUpdaterConfig)
     updater.handleCurrentlyRunningUpdate(args)
     if (updater.wasJustUpdated()) return
-    updater.startUpdateProcess()
+    if (updater.isUpdateAvailable()) updater.startUpdateProcess()
 }

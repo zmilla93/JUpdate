@@ -24,7 +24,7 @@ class JarUpdater(
 //            Files.delete(Paths.get(launcherPath!!))
             println("Copying files...")
             Files.copy(
-                updaterConfig.tempDirectory.resolve(updaterConfig.patcherFileName),
+                config.tempDirectory.resolve(config.patcherFileName),
                 Paths.get(launcherPath!!),
                 StandardCopyOption.REPLACE_EXISTING
             )

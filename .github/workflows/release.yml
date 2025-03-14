@@ -63,13 +63,14 @@ jobs:
             --input target/jar \
             --main-jar JUpdater.jar \
             --main-class io.github.zmilla93.MainKt \
+            --app-version ${{ env.VERSION }} \
             --dest win-msi \
             --win-per-user-install \
             --win-console \
             --win-shortcut-prompt \
             --win-shortcut \
             --win-menu
-          cp win-msi/JUpdater-1.0.msi JUpdater-win-installer.msi
+          cp win-msi/JUpdater-${{ env.VERSION }}.msi JUpdater-win-installer.msi
 
       - name: Build Windows Portable
         shell: bash
@@ -82,11 +83,11 @@ jobs:
             --main-jar JUpdater.jar \
             --main-class io.github.zmilla93.MainKt \
             --dest win-portable
-#          Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
+      #          Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
 
       #      FIXME: Combine with previous step?
       - name: Zip the Windows Portable
-#        shell: powershell
+        #        shell: powershell
         run: Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
 
       - name: Create release

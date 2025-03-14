@@ -118,6 +118,7 @@ class GithubAPI(
             logger.info("Downloading file...");
             logger.info("\tSource      : $source");
             logger.info("\tDestination : $destination");
+            Files.createDirectories(destination.parent)
             val httpConnection = URL(source).openConnection() as HttpURLConnection
             val fileSize = httpConnection.getContentLength()
             val inputStream = BufferedInputStream(httpConnection.inputStream)

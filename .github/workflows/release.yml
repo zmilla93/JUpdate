@@ -55,7 +55,7 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          name: app-image
+          name: JUpdater v0.0.1
           tag: v0.0.1
           artifacts: JUpdater.jar, JUpdater-win-portable.zip
           token: ${{ secrets.GITHUB_TOKEN }}

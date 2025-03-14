@@ -25,11 +25,13 @@ class JarUpdater(
         }
         try {
 //            Files.delete(Paths.get(launcherPath!!))
+            println("Copying files...")
             Files.copy(
                 updaterConfig.tempDirectory.resolve(updaterConfig.patcherFileName),
                 Paths.get(launcherPath!!),
                 StandardCopyOption.REPLACE_EXISTING
             )
+            println("Files copied successfully!")
             return true
         } catch (e: IOException) {
             e.printStackTrace()

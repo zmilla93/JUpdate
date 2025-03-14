@@ -68,6 +68,7 @@ abstract class GitHubUpdater(
     override fun runClean() {
         val args = ArrayList<String>()
         // TODO @important: Add launcher
+        println("launcher: $launcherPath")
         args.add("java")
         args.add("-jar")
         args.add(launcherPath!!)
@@ -81,7 +82,8 @@ abstract class GitHubUpdater(
     }
 
     override fun clean(): Boolean {
-        TODO("Not yet implemented")
+        // FIXME : implement this
+        return true
     }
 
 }

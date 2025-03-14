@@ -69,7 +69,7 @@ jobs:
             --win-shortcut-prompt \
             --win-shortcut \
             --win-menu
-          move win-msi/JUpdater-1.0.msi JUpdater-win-installer.msi
+          cp win-msi/JUpdater-1.0.msi JUpdater-win-installer.msi
 
       - name: Build Windows Portable
         shell: bash

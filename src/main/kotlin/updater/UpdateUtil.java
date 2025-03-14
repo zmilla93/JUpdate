@@ -3,6 +3,7 @@ package updater;
 import java.io.File;
 import java.util.regex.Matcher;
 
+@Deprecated
 public class UpdateUtil {
 
     public static boolean validateDirectory(String directory) {

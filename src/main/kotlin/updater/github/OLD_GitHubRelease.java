@@ -7,6 +7,7 @@ import updater.data.AppVersion;
 /**
  * Represents a GitHub release.
  */
+@Deprecated
 public class OLD_GitHubRelease implements Comparable<OLD_GitHubRelease> {
 
     public final AppVersion appVersion;

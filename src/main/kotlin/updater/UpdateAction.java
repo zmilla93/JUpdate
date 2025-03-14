@@ -1,5 +1,6 @@
 package updater;
 
+@Deprecated
 public enum UpdateAction {
 
     NONE, DOWNLOAD, PATCH, CLEAN;

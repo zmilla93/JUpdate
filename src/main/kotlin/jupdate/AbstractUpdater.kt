@@ -1,10 +1,16 @@
 package io.github.zmilla93.jupdate
 
-import io.github.zmilla93.updater.UpdateStep
+import io.github.zmilla93.updater.data.UpdateStep
 import org.slf4j.LoggerFactory
-import updater.UpdateUtil
+import java.io.File
 import java.net.URISyntaxException
+import java.util.regex.Matcher
 
+/**
+ * Abstracts the update process into 4 steps: download, unpack, patch, clean.
+ * Patching happens from a temporary process, and clean is run on the newly installed
+ * process, which is handled with runPatch and runClean.
+ */
 abstract class AbstractUpdater {
 
     /** Returns true when a new update is available. */
@@ -25,26 +31,10 @@ abstract class AbstractUpdater {
 
     /**
      * This must be called before anything else using the program launch args.
-     *
+     * The update process will continue (if running) based on the program args.
      */
     fun handleCurrentlyRunningUpdate(args: Array<String>) {
-        println("Handling update process...")
-        val existingLauncherArg = args.find { it.startsWith(LAUNCHER_PREFIX) }
-        if (existingLauncherArg != null) {
-            println("Using existing launcher path")
-            launcherPathArg = existingLauncherArg
-            launcherPath = existingLauncherArg.replaceFirst(LAUNCHER_PREFIX, "")
-        } else {
-            println("Creating new launcher path")
-            launcherPath = getLaunchPath()
-            launcherPathArg = LAUNCHER_PREFIX + launcherPath;
-            isLauncher = true
-        }
-        if (launcherPath == null) {
-            println("LAUNCHER PATH IS NULL!")
-            return
-        }
-        println("Launcher: " + launcherPath)
+        if (!validateLauncherPath(args)) return
         currentUpdateStep = getCurrentUpdateStep(args)
         when (currentUpdateStep) {
             UpdateStep.NONE -> {}
@@ -96,22 +86,41 @@ abstract class AbstractUpdater {
      */
     protected abstract fun clean(): Boolean
 
-    private fun validateLauncherPath() {
-
-    }
-
-    fun getCurrentUpdateStep(args: Array<String>): UpdateStep {
+    /** Gets the current [UpdateStep] based on the program arguments. */
+    private fun getCurrentUpdateStep(args: Array<String>): UpdateStep {
         if (args.contains("patch")) return UpdateStep.PATCH
         if (args.contains("clean")) return UpdateStep.CLEAN
         return UpdateStep.NONE
     }
 
-    /** This returns the full path to the currently running program. */
-    fun getLaunchPath(): String? {
+    /**
+     * Checks if an existing launcher path was supplied by the program arguments.
+     * If not, set it using the currently running program.
+     */
+    private fun validateLauncherPath(args: Array<String>): Boolean {
+        val existingLauncherArg = args.find { it.startsWith(LAUNCHER_PREFIX) }
+        if (existingLauncherArg != null) {
+            launcherPathArg = existingLauncherArg
+            launcherPath = existingLauncherArg.replaceFirst(LAUNCHER_PREFIX, "")
+        } else {
+            launcherPath = getLaunchPath()
+            launcherPathArg = LAUNCHER_PREFIX + launcherPath;
+            isLauncher = true
+        }
+        return launcherPath != null
+    }
+
+    /**
+     *  Returns the full path of the currently running program.
+     *  Used at the start of the updating process to save the original launch path.
+     */
+    private fun getLaunchPath(): String? {
         try {
             var path = AbstractUpdater::class.java.protectionDomain.codeSource.location.toURI().path
             if (path.startsWith("/")) path = path.replaceFirst("/".toRegex(), "")
-            return UpdateUtil.cleanFileSeparators(path)
+            // FIXME : Is cleaning file separators required?
+            path = path.replace("[/\\\\]".toRegex(), Matcher.quoteReplacement(File.separator))
+            return path
         } catch (e: URISyntaxException) {
             e.printStackTrace()
             return null

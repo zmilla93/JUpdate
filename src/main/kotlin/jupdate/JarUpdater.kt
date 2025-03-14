@@ -10,9 +10,9 @@ class JarUpdater(
     author: String,
     repo: String,
     currentVersion: AppVersion,
-    updaterConfig: UpdaterConfig,
+    updaterConfig: GitHubUpdaterConfig,
     allowPreReleases: Boolean = false
-) : GitHubUpdater(author, repo, currentVersion, updaterConfig, allowPreReleases) {
+) : AbstractGitHubUpdater(author, repo, currentVersion, updaterConfig, allowPreReleases) {
 
     override fun unpack(): Boolean {
         // Do nothing

@@ -19,6 +19,7 @@ import java.util.Date;
  * A simple logging implementation that works through program starts.
  */
 // FIXME : Add support for legacy log file format?
+@Deprecated
 public class ZLogger {
 
     private static final String FILE_PREFIX = "log_";

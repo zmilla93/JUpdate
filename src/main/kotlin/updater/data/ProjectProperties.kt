@@ -1,10 +1,13 @@
-package io.github.zmilla93.updater
+package io.github.zmilla93.updater.data
 
 import org.slf4j.LoggerFactory
 import java.io.BufferedInputStream
 import java.io.IOException
 import java.util.*
 
+/**
+ * Handles reading a [Properties] file.
+ */
 class ProjectProperties(fileName: String = "project.properties") {
 
     var version: String = ""

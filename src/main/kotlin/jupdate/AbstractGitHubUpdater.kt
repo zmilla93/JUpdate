@@ -1,17 +1,17 @@
 package io.github.zmilla93.jupdate
 
-import io.github.zmilla93.updater.GithubAPI
+import io.github.zmilla93.updater.github.GithubAPI
 import updater.data.AppVersion
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.system.exitProcess
 
-abstract class GitHubUpdater(
+abstract class AbstractGitHubUpdater(
     author: String,
     repo: String,
     private val currentVersion: AppVersion,
-    val config: UpdaterConfig,
+    val config: GitHubUpdaterConfig,
     allowPreReleases: Boolean = false
 ) : AbstractUpdater() {
 

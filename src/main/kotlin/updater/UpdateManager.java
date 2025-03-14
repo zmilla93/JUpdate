@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit;
  *      }
  * </pre>
  */
+@Deprecated
 public class UpdateManager {
 
     // TODO : Add a function to fetch patch notes, and possibly save them to disk.

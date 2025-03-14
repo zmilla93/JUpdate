@@ -2,8 +2,8 @@ package io.github.zmilla93
 
 import io.github.zmilla93.gui.MainFrame
 import io.github.zmilla93.jupdate.JarUpdater
-import io.github.zmilla93.jupdate.UpdaterConfig
-import io.github.zmilla93.updater.ProjectProperties
+import io.github.zmilla93.jupdate.GitHubUpdaterConfig
+import io.github.zmilla93.updater.data.ProjectProperties
 import updater.data.AppVersion
 import java.nio.file.Paths
 import javax.swing.SwingUtilities
@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
 fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     val jarName = "JUpdater.jar"
     val tempDir = Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp")
-    val jarUpdaterConfig = UpdaterConfig(arrayOf(jarName), jarName, tempDir)
+    val jarUpdaterConfig = GitHubUpdaterConfig(arrayOf(jarName), jarName, tempDir)
     val updater = JarUpdater("zmilla93", "JUpdate", currentVersion, jarUpdaterConfig)
     updater.handleCurrentlyRunningUpdate(args)
     if (updater.wasJustUpdated()){

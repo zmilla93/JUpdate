@@ -1,7 +1,6 @@
-package io.github.zmilla93.updater
+package io.github.zmilla93.updater.github
 
 import com.google.gson.Gson
-import io.github.zmilla93.updater.github.GitHubRelease
 import org.slf4j.LoggerFactory
 import updater.IUpdateProgressListener
 import java.io.*

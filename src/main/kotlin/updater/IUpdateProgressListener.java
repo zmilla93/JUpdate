@@ -6,11 +6,13 @@ package updater;
  */
 public interface IUpdateProgressListener {
 
-    // Called with a number 0-100
+    /// Called with a number 0-100
     void onDownloadProgress(int progressPercent);
 
+    /// Called when the download completes successfully
     void onDownloadComplete();
 
+    /// Called if the download fails.
     void onDownloadFailed();
 
 }

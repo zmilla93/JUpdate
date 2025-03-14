@@ -53,7 +53,7 @@ jobs:
       #      - name: Install jpackage (for Linux)
       #        run: sudo apt-get install -y fakeroot
 
-      - name: Create Windows Portable
+      - name: Build Windows Installer
         shell: bash
         run: |
           mkdir -p dist
@@ -63,14 +63,14 @@ jobs:
             --input target/jar \
             --main-jar JUpdater.jar \
             --main-class io.github.zmilla93.MainKt \
-            --dest win-msi
+            --dest win-msi \
             --win-per-user-install \
             --win-console \
             --win-shortcut-prompt \
             --win-shortcut \
             --win-menu
 
-      - name: Create Windows Portable
+      - name: Build Windows Portable
         shell: bash
         run: |
           mkdir -p dist
@@ -82,7 +82,7 @@ jobs:
             --main-class io.github.zmilla93.MainKt \
             --dest win-portable
 
-      - name: Zip the app-image
+      - name: Zip the Windows Portable
         run: Compress-Archive -Path win-portable/* -Destination dist/JUpdater-win-portable.zip
 
       - name: Create release

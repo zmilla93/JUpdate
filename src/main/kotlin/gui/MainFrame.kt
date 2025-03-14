@@ -13,8 +13,8 @@ class MainFrame(args: Array<String>) : JFrame() {
         size = Dimension(400, 400)
         defaultCloseOperation = EXIT_ON_CLOSE
         var text = "Hello, World!~ ${args.joinToString { "," }}"
-        if (args.contains("clean")) text += " > Patched!!"
-        if (args.contains("patch")) text += " > Updated!!"
+        if (args.contains("clean")) text += " > Updated!! (cleaned)"
+        if (args.contains("patch")) text += " > Patched!!"
         layout = BorderLayout()
         add(JLabel(text), BorderLayout.CENTER)
     }

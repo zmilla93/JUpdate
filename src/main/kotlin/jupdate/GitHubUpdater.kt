@@ -69,6 +69,7 @@ abstract class GitHubUpdater(
     override fun runClean() {
         val args = ArrayList<String>()
         // TODO @important: Add launcher
+        println("Running clean....")
         println("launcher: $launcherPath")
         args.add("java")
         args.add("-jar")

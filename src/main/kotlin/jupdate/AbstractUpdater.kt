@@ -23,17 +23,27 @@ abstract class AbstractUpdater {
         const val LAUNCHER_PREFIX = "launcher:"
     }
 
+    /**
+     * This must be called before anything else using the program launch args.
+     *
+     */
     fun handleUpdateProcess(args: Array<String>) {
+        println("Handling update process...")
         val existingLauncherArg = args.find { it.startsWith(LAUNCHER_PREFIX) }
         if (existingLauncherArg != null) {
+            println("Using existing launcher path")
             launcherPathArg = existingLauncherArg
             launcherPath = existingLauncherArg.replaceFirst(LAUNCHER_PREFIX, "")
         } else {
+            println("Creating new launcher path")
             launcherPath = getLaunchPath()
             launcherPathArg = LAUNCHER_PREFIX + launcherPath;
             isLauncher = true
         }
-        if (launcherPath == null) return
+        if (launcherPath == null) {
+            println("LAUNCHER PATH IS NULL!")
+            return
+        }
         println("Launcher: " + launcherPath)
         currentUpdateStep = getCurrentUpdateStep(args)
         when (currentUpdateStep) {

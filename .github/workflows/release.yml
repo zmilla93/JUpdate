@@ -87,7 +87,7 @@ jobs:
       #      FIXME: Combine with previous step?
       - name: Zip the Windows Portable
 #        shell: powershell
-        run: Compress-Archive -Path win-portable/* -Destination dist/JUpdater-win-portable.zip
+        run: Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
 
       - name: Create release
         uses: ncipollo/release-action@v1

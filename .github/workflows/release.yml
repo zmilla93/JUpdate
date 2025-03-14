@@ -53,27 +53,39 @@ jobs:
       #      - name: Install jpackage (for Linux)
       #        run: sudo apt-get install -y fakeroot
 
-      - name: Create app-image using jpackage
+      - name: Create Windows Portable
         shell: bash
         run: |
           mkdir -p dist
           jpackage \
-            --input target/jar \
             --name JUpdater \
+            --type msi \
+            --input target/jar \
             --main-jar JUpdater.jar \
             --main-class io.github.zmilla93.MainKt \
+            --dest win-msi
+
+      - name: Create Windows Portable
+        shell: bash
+        run: |
+          mkdir -p dist
+          jpackage \
+            --name JUpdater \
             --type app-image \
-            --dest dist
+            --input target/jar \
+            --main-jar JUpdater.jar \
+            --main-class io.github.zmilla93.MainKt \
+            --dest win-portable
 
       - name: Zip the app-image
-        run: Compress-Archive -Path dist/* -Destination JUpdater-win-portable.zip
+        run: Compress-Archive -Path win-portable/* -Destination dist/JUpdater-win-portable.zip
 
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
           name: ${{ env.PROJECT_NAME }} ${{ env.VERSION }}
           tag: ${{ env.VERSION }}
-          artifacts: target/jar/JUpdater.jar, JUpdater-win-portable.zip
+          artifacts: target/jar/JUpdater.jar, dist/JUpdater-win-portable.zip, win-msi/JUpdater-1.0.msi
           token: ${{ secrets.GITHUB_TOKEN }}
 
 #  release:

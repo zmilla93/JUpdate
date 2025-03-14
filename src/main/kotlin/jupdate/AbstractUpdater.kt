@@ -1,7 +1,7 @@
 package io.github.zmilla93.jupdate
 
-import com.sun.org.slf4j.internal.LoggerFactory
 import io.github.zmilla93.updater.UpdateStep
+import org.slf4j.LoggerFactory
 import updater.UpdateUtil
 import java.net.URISyntaxException
 

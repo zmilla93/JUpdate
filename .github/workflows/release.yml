@@ -1,11 +1,12 @@
 name: Build & Release
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "master" ]
 
 env:
-  PROJECT_NAME: JUpdater
+  PROJECT_NAME: UpdateApp
 
 jobs:
   build:
@@ -70,7 +71,7 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          name: JUpdater ${{ env.VERSION }}
+          name: ${{ env.PROJECT_NAME }} ${{ env.VERSION }}
           tag: ${{ env.VERSION }}
           artifacts: JUpdater.jar, JUpdater-win-portable.zip
           token: ${{ secrets.GITHUB_TOKEN }}

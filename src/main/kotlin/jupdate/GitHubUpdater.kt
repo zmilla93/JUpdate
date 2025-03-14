@@ -90,8 +90,8 @@ abstract class GitHubUpdater(
     override fun clean(): Boolean {
         Files.walkFileTree(config.tempDirectory, object : SimpleFileVisitor<Path>() {
             @Throws(IOException::class)
-            override fun postVisitDirectory(dir: Path, exc: IOException): FileVisitResult {
-                Files.delete(dir)
+            override fun postVisitDirectory(dir: Path?, exc: IOException?): FileVisitResult {
+                if (dir != null) Files.deleteIfExists(dir)
                 return FileVisitResult.CONTINUE
             }
 

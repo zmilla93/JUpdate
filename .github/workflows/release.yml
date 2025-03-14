@@ -35,7 +35,7 @@ jobs:
       - name: Build with Maven
         run: |
           mvn clean compile assembly:single
-          copy target/jar/JUpdater.jar JUpdater.jar
+#          copy target/jar/JUpdater.jar JUpdater.jar
 
       - name: Get App Version
         id: get_version
@@ -73,7 +73,7 @@ jobs:
         with:
           name: ${{ env.PROJECT_NAME }} ${{ env.VERSION }}
           tag: ${{ env.VERSION }}
-          artifacts: JUpdater.jar, JUpdater-win-portable.zip
+          artifacts: target/jar/JUpdater.jar, JUpdater-win-portable.zip
           token: ${{ secrets.GITHUB_TOKEN }}
 
 #  release:

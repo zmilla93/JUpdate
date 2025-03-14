@@ -2,13 +2,13 @@ package io.github.zmilla93.jupdate
 
 import io.github.zmilla93.updater.GithubAPI
 import updater.data.AppVersion
-import java.nio.file.Paths
+import kotlin.system.exitProcess
 
 abstract class GitHubUpdater(
     author: String,
     repo: String,
     private val currentVersion: AppVersion,
-    val updaterConfig: GitHubUpdaterConfig,
+    val updaterConfig: UpdaterConfig,
     allowPreReleases: Boolean = false
 ) : AbstractUpdater() {
 
@@ -20,15 +20,20 @@ abstract class GitHubUpdater(
         return currentVersion != latestVersion
     }
 
-    override fun download(vararg assetNames: String): Boolean {
+    fun startUpdateProcess() {
+        download()
+        runPatch()
+    }
+
+    override fun download(): Boolean {
         if (github.latestRelease() == null) return false
-        if (assetNames.isEmpty()) throw RuntimeException("No download targets specified.")
-        for (assetName in assetNames) {
+        if (updaterConfig.assetNames.isEmpty()) throw RuntimeException("No download targets specified.")
+        for (assetName in updaterConfig.assetNames) {
             val asset = github.latestRelease()!!.findAssetByName(assetName)
             if (asset == null) return false
             val success = github.downloadFile(
                 asset.browser_download_url,
-                Paths.get(updaterConfig.tempDirectory, assetName).toString()
+                updaterConfig.tempDirectory.resolve(assetName)
             )
             if (!success) return false
         }
@@ -44,20 +49,30 @@ abstract class GitHubUpdater(
         // TODO @important: Add launcher
         args.add("java")
         args.add("-jar")
-        args.add(Paths.get(updaterConfig.tempDirectory).resolve(updaterConfig.patchTarget).toString())
+        args.add(updaterConfig.tempDirectory.resolve(updaterConfig.patcherFileName).toString())
         args.add("patch")
         // TODO @important: Unlock
         val processBuilder = ProcessBuilder(args)
         processBuilder.start()
+        exitProcess(0)
     }
 
-    override fun patch(): Boolean {
-//        updaterConfig.patchTarget
-        return true
-    }
+//    override fun patch(): Boolean {
+////        updaterConfig.patchTarget
+//        return true
+//    }
 
     override fun runClean() {
-        TODO("Not yet implemented")
+        val args = ArrayList<String>()
+        // TODO @important: Add launcher
+        args.add("java")
+        args.add("-jar")
+        args.add(launcherPath!!)
+        args.add("clean")
+        // TODO @important: Unlock
+        val processBuilder = ProcessBuilder(args)
+        processBuilder.start()
+        exitProcess(0)
     }
 
     override fun clean(): Boolean {

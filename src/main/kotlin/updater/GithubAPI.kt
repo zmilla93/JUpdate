@@ -10,7 +10,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 import javax.swing.SwingUtilities
 
 /**
@@ -111,7 +111,7 @@ class GithubAPI(
     }
 
 
-    fun downloadFile(source: String, destination: String): Boolean {
+    fun downloadFile(source: String, destination: Path): Boolean {
         try {
 //            if (latestRelease == null) fetchLatestRelease();
 //            if (latestRelease == null) return false;
@@ -119,38 +119,38 @@ class GithubAPI(
             logger.info("\tSource      : $source");
             logger.info("\tDestination : $destination");
             val httpConnection = URL(source).openConnection() as HttpURLConnection
-            val fileSize = httpConnection.getContentLength();
-            val inputStream = BufferedInputStream(httpConnection.inputStream);
-            val outputStream = BufferedOutputStream(Files.newOutputStream(Paths.get(destination)));
+            val fileSize = httpConnection.getContentLength()
+            val inputStream = BufferedInputStream(httpConnection.inputStream)
+            val outputStream = BufferedOutputStream(Files.newOutputStream(destination))
             val data = ByteArray(BYTE_BUFFER_SIZE)
-            var totalBytesRead = 0;
+            var totalBytesRead = 0
             var numBytesRead = 0
-            var currentProgressPercent = 0;
+            var currentProgressPercent = 0
             while (true) {
                 numBytesRead = inputStream.read(data, 0, BYTE_BUFFER_SIZE)
                 if (numBytesRead < 0) break
-                outputStream.write(data, 0, numBytesRead);
-                totalBytesRead += numBytesRead;
-                val newProgressPercent = Math.round(totalBytesRead.toFloat() / fileSize * 100);
+                outputStream.write(data, 0, numBytesRead)
+                totalBytesRead += numBytesRead
+                val newProgressPercent = Math.round(totalBytesRead.toFloat() / fileSize * 100)
                 if (newProgressPercent != currentProgressPercent) {
-                    currentProgressPercent = newProgressPercent;
+                    currentProgressPercent = newProgressPercent
                     for (listener in progressListeners) {
                         SwingUtilities.invokeLater { listener.onDownloadProgress(currentProgressPercent) }
                     }
                 }
             }
-            inputStream.close();
-            outputStream.close();
+            inputStream.close()
+            outputStream.close()
             for (listener in progressListeners)
-                SwingUtilities.invokeLater(listener::onDownloadComplete);
+                SwingUtilities.invokeLater(listener::onDownloadComplete)
             logger.info("File downloaded successfully!")
-            return true;
+            return true
         } catch (e: IOException) {
-            logger.error("Error downloading file: $source");
+            logger.error("Error downloading file: $source")
             e.printStackTrace()
             for (listener in progressListeners)
-                SwingUtilities.invokeLater(listener::onDownloadFailed);
-            return false;
+                SwingUtilities.invokeLater(listener::onDownloadFailed)
+            return false
         }
     }
 

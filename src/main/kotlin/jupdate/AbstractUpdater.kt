@@ -1,5 +1,6 @@
 package io.github.zmilla93.jupdate
 
+import io.github.zmilla93.updater.UpdateStep
 import updater.UpdateUtil
 import java.net.URISyntaxException
 
@@ -8,10 +9,42 @@ abstract class AbstractUpdater {
     /** Returns true when a new update is available. */
     abstract fun isUpdateAvailable(): Boolean
 
-    @JvmField
-    /** This flag MUST be set to true when running the 'clean' step! */
-    protected var wasJustUpdated: Boolean = false
+    /** Path to the originally running program */
+    var launcherPath: String? = null
+    var isLauncher = false;
+    var currentUpdateStep = UpdateStep.NONE
+    private var wasJustUpdated = false
 
+    companion object {
+        const val LAUNCHER_PREFIX = "launcher:"
+    }
+
+    fun handleUpdateProcess(args: Array<String>) {
+        val launcherArg = args.find { it.startsWith(LAUNCHER_PREFIX) }
+        if (launcherArg != null) launcherPath = launcherArg.replaceFirst(LAUNCHER_PREFIX, "")
+        else {
+            launcherPath = getLaunchPath()
+            isLauncher = true
+        }
+        if (launcherPath == null) return
+        currentUpdateStep = getCurrentUpdateStep(args)
+        when (currentUpdateStep) {
+            UpdateStep.NONE -> {}
+            UpdateStep.DOWNLOAD -> download()
+            UpdateStep.UNPACK -> unpack()
+            UpdateStep.PATCH -> {
+                patch()
+                runClean()
+            }
+
+            UpdateStep.CLEAN -> {
+                wasJustUpdated = true
+                clean()
+            }
+        }
+    }
+
+    /** True if the currently running program was launched after running the auto updater */
     fun wasJustUpdated(): Boolean {
         return wasJustUpdated
     }
@@ -19,7 +52,7 @@ abstract class AbstractUpdater {
     /**
      * Step 1/4: Downloads the new file(s) to be installed.
      */
-    abstract fun download(vararg assetNames:String): Boolean
+    abstract fun download(): Boolean
 
     /**
      * Step 2/4: Handles and preprocessing on the newly downloaded files, like unzipping.
@@ -44,6 +77,16 @@ abstract class AbstractUpdater {
      * installed files. This MUST set wasJustUpdated to true.
      */
     abstract fun clean(): Boolean
+
+    private fun validateLauncherPath() {
+
+    }
+
+    fun getCurrentUpdateStep(args: Array<String>): UpdateStep {
+        if (args.contains("patch")) return UpdateStep.PATCH
+        if (args.contains("clean")) return UpdateStep.CLEAN
+        return UpdateStep.NONE
+    }
 
     /** This returns the full path to the currently running program. */
     fun getLaunchPath(): String? {

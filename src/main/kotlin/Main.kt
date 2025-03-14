@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
     println("App Launched: ${args.joinToString(separator = ",")}")
     val properties = ProjectProperties()
     val version = AppVersion(properties.version)
-//    handleUpdateProcess(args, version)
+    handleUpdateProcess(args, version)
     SwingUtilities.invokeLater {
         val mainFrame = MainFrame(args, version)
         mainFrame.isVisible = true
@@ -33,6 +33,9 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     val jarUpdaterConfig = UpdaterConfig(arrayOf(jarName), jarName, tempDir)
     val updater = JarUpdater("zmilla93", "JUpdate", currentVersion, jarUpdaterConfig)
     updater.handleCurrentlyRunningUpdate(args)
-    if (updater.wasJustUpdated()) return
+    if (updater.wasJustUpdated()){
+        println("Was just updated!")
+        return
+    }
     if (updater.isUpdateAvailable()) updater.startUpdateProcess()
 }

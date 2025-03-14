@@ -97,7 +97,7 @@ abstract class GitHubUpdater(
 
             @Throws(IOException::class)
             override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                Files.delete(file)
+                Files.deleteIfExists(file)
                 return FileVisitResult.CONTINUE
             }
         })

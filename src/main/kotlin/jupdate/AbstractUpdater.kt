@@ -19,7 +19,7 @@ abstract class AbstractUpdater {
     /**
      * Step 1/4: Downloads the new file(s) to be installed.
      */
-    abstract fun download(): Boolean
+    abstract fun download(vararg assetNames:String): Boolean
 
     /**
      * Step 2/4: Handles and preprocessing on the newly downloaded files, like unzipping.

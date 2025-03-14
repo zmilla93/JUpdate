@@ -20,16 +20,19 @@ abstract class GitHubUpdater(
         return currentVersion != latestVersion
     }
 
-    override fun download(): Boolean {
+    override fun download(vararg assetNames: String): Boolean {
         if (github.latestRelease() == null) return false
-        val assetName = "SlimTrade.jar"
-        val asset = github.latestRelease()!!.findAssetByName(assetName)
-        if (asset == null) return false
-        println("temp dir: " + updaterConfig.tempDirectory)
-        return github.downloadFile(
-            asset.browser_download_url,
-            Paths.get(updaterConfig.tempDirectory, assetName).toString()
-        )
+        if (assetNames.isEmpty()) throw RuntimeException("No download targets specified.")
+        for (assetName in assetNames) {
+            val asset = github.latestRelease()!!.findAssetByName(assetName)
+            if (asset == null) return false
+            val success = github.downloadFile(
+                asset.browser_download_url,
+                Paths.get(updaterConfig.tempDirectory, assetName).toString()
+            )
+            if (!success) return false
+        }
+        return true
     }
 
 //    override fun unpack(): Boolean {
@@ -39,6 +42,8 @@ abstract class GitHubUpdater(
     override fun runPatch() {
         val args = ArrayList<String>()
         // TODO @important: Add launcher
+        args.add("java")
+        args.add("-jar")
         args.add(Paths.get(updaterConfig.tempDirectory).resolve(updaterConfig.patchTarget).toString())
         args.add("patch")
         // TODO @important: Unlock

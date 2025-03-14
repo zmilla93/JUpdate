@@ -22,7 +22,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'  # Adjust Java version as needed
 
-      - name: Cache Maven dependencies
+      - name: Cache Maven Dependencies
         uses: actions/cache@v3
         with:
           path: ~/.m2
@@ -36,22 +36,21 @@ jobs:
           copy target/jar/JUpdater.jar JUpdater.jar
       #      - name: Install jpackage (for Linux)
       #        run: sudo apt-get install -y fakeroot
-      
 
-      - name: Create app-image using jpackage
-        shell: bash
-        run: |
-          mkdir -p dist
-          jpackage \
-            --input target/jar \
-            --name JUpdater \
-            --main-jar JUpdater.jar \
-            --main-class io.github.zmilla93.MainKt \
-            --type app-image \
-            --dest dist
+#      - name: Create app-image using jpackage
+#        shell: bash
+#        run: |
+#          mkdir -p dist
+#          jpackage \
+#            --input target/jar \
+#            --name JUpdater \
+#            --main-jar JUpdater.jar \
+#            --main-class io.github.zmilla93.MainKt \
+#            --type app-image \
+#            --dest dist
 
-      - name: Zip the app-image
-        run: Compress-Archive -Path dist/* -Destination JUpdater-win-portable.zip
+#      - name: Zip the app-image
+#        run: Compress-Archive -Path dist/* -Destination JUpdater-win-portable.zip
 
       - name: Create release
         uses: ncipollo/release-action@v1

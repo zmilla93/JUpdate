@@ -37,8 +37,11 @@ fun main(args: Array<String>) {
 //    println("Latest Release: ${github.latestRelease()!!.name}")
 //    println("Latest Release: ${github.latestRelease()!!.tag_name}")
     val tempDir = "C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp"
-    val updaterConfig = GitHubUpdaterConfig("SlimTrade.jar", "SlimTrade.jar", tempDir)
-    val updater = JarUpdater("zmilla93", "SlimTrade", version, updaterConfig)
+    val jarName = "JUpdater.jar"
+    val jarUpdaterConfig = GitHubUpdaterConfig(jarName, jarName, tempDir)
+    val updater = JarUpdater("zmilla93", "JUpdate", version, jarUpdaterConfig)
+    updater.download(jarName)
+    updater.runPatch()
     println("Update available: ${updater.isUpdateAvailable()}")
 //    if (updater.isUpdateAvailable())
 //    updater.download()

@@ -27,7 +27,7 @@ abstract class AbstractUpdater {
      * This must be called before anything else using the program launch args.
      *
      */
-    fun handleUpdateProcess(args: Array<String>) {
+    fun handleCurrentlyRunningUpdate(args: Array<String>) {
         println("Handling update process...")
         val existingLauncherArg = args.find { it.startsWith(LAUNCHER_PREFIX) }
         if (existingLauncherArg != null) {
@@ -70,31 +70,31 @@ abstract class AbstractUpdater {
     /**
      * Step 1/4: Downloads the new file(s) to be installed.
      */
-    abstract fun download(): Boolean
+    protected abstract fun download(): Boolean
 
     /**
      * Step 2/4: Handles and preprocessing on the newly downloaded files, like unzipping.
      * Might also do nothing.
      */
-    abstract fun unpack(): Boolean
+    protected abstract fun unpack(): Boolean
 
     /** Patching must run in a new process using temp files to allow overwriting of the old files. */
-    abstract fun runPatch()
+    protected abstract fun runPatch()
 
     /**
      * Step 3/4: Overwrite the old files with the new files. This is run as a new process,
      * typically using the temporary files, so that the original files can be overwritten.
      */
-    abstract fun patch(): Boolean
+    protected abstract fun patch(): Boolean
 
     /** Cleaning must run in a new process using the newly installed files.  */
-    abstract fun runClean()
+    protected abstract fun runClean()
 
     /**
      * Step 4/4: Delete any temporary files. This is run as a new process using the newly
      * installed files. This MUST set wasJustUpdated to true.
      */
-    abstract fun clean(): Boolean
+    protected abstract fun clean(): Boolean
 
     private fun validateLauncherPath() {
 

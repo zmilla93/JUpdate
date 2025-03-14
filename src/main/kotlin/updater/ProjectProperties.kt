@@ -5,11 +5,10 @@ import java.io.BufferedInputStream
 import java.io.IOException
 import java.util.*
 
-class ProjectProperties {
+class ProjectProperties(fileName: String = "project.properties") {
 
     var version: String = ""
     val logger = LoggerFactory.getLogger(javaClass)
-    val fileName = "project.properties"
 
     init {
         try {

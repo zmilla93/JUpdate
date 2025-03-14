@@ -20,9 +20,6 @@ class JarUpdater(
     }
 
     override fun patch(): Boolean {
-        if (launcherPath == null) {
-            throw RuntimeException("UHOH!")
-        }
         try {
 //            Files.delete(Paths.get(launcherPath!!))
             println("Copying files...")

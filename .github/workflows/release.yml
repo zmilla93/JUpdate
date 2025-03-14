@@ -75,7 +75,6 @@ jobs:
       - name: Build Windows Portable
 #        shell: bash
         run: |
-#          mkdir -p dist
           jpackage `
             --name JUpdater `
             --type app-image `

@@ -13,7 +13,7 @@ class MainFrame(args: Array<String>) : JFrame() {
         size = Dimension(400, 400)
         defaultCloseOperation = EXIT_ON_CLOSE
         val text = "Hello, World!~ ${args}"
-        if (args.contains("clean")) text + " > Updated!"
+        if (args.contains("clean")) text + " > Updated!!"
         layout = BorderLayout()
         add(JLabel(text), BorderLayout.CENTER)
     }

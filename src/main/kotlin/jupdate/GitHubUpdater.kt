@@ -53,6 +53,7 @@ abstract class GitHubUpdater(
         args.add("patch")
         // TODO @important: Unlock
         val processBuilder = ProcessBuilder(args)
+        processBuilder.redirectOutput()
         processBuilder.start()
         exitProcess(0)
     }
@@ -71,6 +72,7 @@ abstract class GitHubUpdater(
         args.add("clean")
         // TODO @important: Unlock
         val processBuilder = ProcessBuilder(args)
+        processBuilder.redirectOutput()
         processBuilder.start()
         exitProcess(0)
     }

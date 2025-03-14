@@ -45,28 +45,28 @@ jobs:
           $version = $pom.project.version
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
 
-#      - name: Extract app version from pom.xml (ubuntu)
-#        run: |
-#          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-#          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+      - name: Extract app version from pom.xml (ubuntu)
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       #      - name: Install jpackage (for Linux)
       #        run: sudo apt-get install -y fakeroot
 
-#      - name: Create app-image using jpackage
-#        shell: bash
-#        run: |
-#          mkdir -p dist
-#          jpackage \
-#            --input target/jar \
-#            --name JUpdater \
-#            --main-jar JUpdater.jar \
-#            --main-class io.github.zmilla93.MainKt \
-#            --type app-image \
-#            --dest dist
+      - name: Create app-image using jpackage
+        shell: bash
+        run: |
+          mkdir -p dist
+          jpackage \
+            --input target/jar \
+            --name JUpdater \
+            --main-jar JUpdater.jar \
+            --main-class io.github.zmilla93.MainKt \
+            --type app-image \
+            --dest dist
 
-#      - name: Zip the app-image
-#        run: Compress-Archive -Path dist/* -Destination JUpdater-win-portable.zip
+      - name: Zip the app-image
+        run: Compress-Archive -Path dist/* -Destination JUpdater-win-portable.zip
 
       - name: Create release
         uses: ncipollo/release-action@v1

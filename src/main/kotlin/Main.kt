@@ -1,8 +1,11 @@
 package io.github.zmilla93
 
 import io.github.zmilla93.gui.MainFrame
+import io.github.zmilla93.jupdate.AbstractGitHubUpdater
 import io.github.zmilla93.jupdate.JarUpdater
 import io.github.zmilla93.jupdate.GitHubUpdaterConfig
+import io.github.zmilla93.jupdate.UpdateUtil
+import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.ProjectProperties
 import updater.data.AppVersion
 import java.nio.file.Paths
@@ -16,7 +19,10 @@ fun main(args: Array<String>) {
     println("App Launched: ${args.joinToString(separator = ",")}")
     val properties = ProjectProperties()
     val version = AppVersion(properties.version)
-    handleUpdateProcess(args, version)
+    val distributionType = DistributionType.checkCurrent(UpdateUtil.getCurrentProgramPath())
+    println("Distribution:" + distributionType)
+
+//    handleUpdateProcess(args, version)
     SwingUtilities.invokeLater {
         val mainFrame = MainFrame(args, version)
         mainFrame.isVisible = true
@@ -31,11 +37,20 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     val jarName = "JUpdater.jar"
     val tempDir = Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp")
     val jarUpdaterConfig = GitHubUpdaterConfig(arrayOf(jarName), jarName, tempDir)
+    System.err.println("updater disabled")
     val updater = JarUpdater("zmilla93", "JUpdate", currentVersion, jarUpdaterConfig)
+    createUpdater()
     updater.handleCurrentlyRunningUpdate(args)
     if (updater.wasJustUpdated()){
         println("Was just updated!")
         return
     }
     if (updater.isUpdateAvailable()) updater.startUpdateProcess()
+}
+
+fun createUpdater(){
+//    var updater:AbstractGitHubUpdater;
+    val distributionType = DistributionType.checkCurrent(UpdateUtil.getCurrentProgramPath())
+    println("Distribution:" + distributionType)
+
 }

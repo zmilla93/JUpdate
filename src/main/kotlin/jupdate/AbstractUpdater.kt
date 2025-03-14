@@ -2,9 +2,6 @@ package io.github.zmilla93.jupdate
 
 import io.github.zmilla93.updater.data.UpdateStep
 import org.slf4j.LoggerFactory
-import java.io.File
-import java.net.URISyntaxException
-import java.util.regex.Matcher
 
 /**
  * Abstracts the update process into 4 steps: download, unpack, patch, clean.
@@ -103,28 +100,11 @@ abstract class AbstractUpdater {
             launcherPathArg = existingLauncherArg
             launcherPath = existingLauncherArg.replaceFirst(LAUNCHER_PREFIX, "")
         } else {
-            launcherPath = getLaunchPath()
+            launcherPath = UpdateUtil.getCurrentProgramPath()
             launcherPathArg = LAUNCHER_PREFIX + launcherPath;
             isLauncher = true
         }
         return launcherPath != null
-    }
-
-    /**
-     *  Returns the full path of the currently running program.
-     *  Used at the start of the updating process to save the original launch path.
-     */
-    private fun getLaunchPath(): String? {
-        try {
-            var path = AbstractUpdater::class.java.protectionDomain.codeSource.location.toURI().path
-            if (path.startsWith("/")) path = path.replaceFirst("/".toRegex(), "")
-            // FIXME : Is cleaning file separators required?
-            path = path.replace("[/\\\\]".toRegex(), Matcher.quoteReplacement(File.separator))
-            return path
-        } catch (e: URISyntaxException) {
-            e.printStackTrace()
-            return null
-        }
     }
 
 }

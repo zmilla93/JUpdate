@@ -45,10 +45,10 @@ jobs:
           $version = $pom.project.version
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
 
-      - name: Extract app version from pom.xml (ubuntu)
-        run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+#      - name: Extract app version from pom.xml (ubuntu)
+#        run: |
+#          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+#          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       #      - name: Install jpackage (for Linux)
       #        run: sudo apt-get install -y fakeroot

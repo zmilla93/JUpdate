@@ -36,9 +36,9 @@ jobs:
           mvn clean compile assembly:single
           copy target/jar/JUpdater.jar JUpdater.jar
 
-      - name: Extract Maven Version
+      - name: Get App Version
         id: get_version
-        shell: pwsh
+        shell: powershell
         run: |
           [xml]$pom = Get-Content pom.xml
           $version = $pom.project.version

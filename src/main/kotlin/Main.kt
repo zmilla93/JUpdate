@@ -1,6 +1,7 @@
 package io.github.zmilla93
 
 import io.github.zmilla93.gui.MainFrame
+import io.github.zmilla93.gui.NameTest
 import io.github.zmilla93.jupdate.JarUpdater
 import io.github.zmilla93.jupdate.UpdaterConfig
 import io.github.zmilla93.updater.ProjectProperties

@@ -9,13 +9,12 @@
     <version>0.0.1</version>
 
     <properties>
-        <!-- 1.8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 -->
         <jvm-version>21</jvm-version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>${jvm-version}</kotlin.compiler.jvmTarget>
         <maven.compiler.source>${jvm-version}</maven.compiler.source>
         <maven.compiler.target>${jvm-version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <kotlin.code.style>official</kotlin.code.style>
     </properties>
 
     <repositories>

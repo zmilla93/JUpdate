@@ -5,6 +5,7 @@ import kotlin.io.path.exists
 
 enum class DistributionType {
 
+    NONE,
     JAR,
     WINDOWS_MSI,
     WINDOWS_PORTABLE,
@@ -14,9 +15,9 @@ enum class DistributionType {
     companion object {
 
         var hasRunCheck = false
-        private var current: DistributionType = JAR
+        private var current: DistributionType = NONE
 
-        fun checkCurrent(launcherPath: String): DistributionType {
+        fun current(launcherPath: String): DistributionType {
             if (hasRunCheck) return current
             val launcher = Paths.get(launcherPath)
             val appFolder = launcher.parent
@@ -24,6 +25,7 @@ enum class DistributionType {
             else if (appFolder.resolve(".jpackage.xml").exists()) current = WINDOWS_PORTABLE
             return current
         }
+
     }
 
 }

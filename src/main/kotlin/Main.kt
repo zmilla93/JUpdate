@@ -14,7 +14,8 @@ import javax.swing.SwingUtilities
 
 
 fun main(args: Array<String>) {
-    println("Hello World!")
+
+    println("App Launched: ${args.joinToString(separator = ",")}")
     SwingUtilities.invokeLater {
         val mainFrame = MainFrame(args)
         mainFrame.isVisible = true

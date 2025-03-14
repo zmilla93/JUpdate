@@ -12,23 +12,29 @@ abstract class AbstractUpdater {
 
     /** Path to the originally running program */
     var launcherPath: String? = null
+    var launcherPathArg: String? = null
     var isLauncher = false;
     var currentUpdateStep = UpdateStep.NONE
     private var wasJustUpdated = false
     protected val logger = LoggerFactory.getLogger(javaClass)
+    var launchArgs = emptyArray<String>()
 
     companion object {
         const val LAUNCHER_PREFIX = "launcher:"
     }
 
     fun handleUpdateProcess(args: Array<String>) {
-        val launcherArg = args.find { it.startsWith(LAUNCHER_PREFIX) }
-        if (launcherArg != null) launcherPath = launcherArg.replaceFirst(LAUNCHER_PREFIX, "")
+        val existingLauncherArg = args.find { it.startsWith(LAUNCHER_PREFIX) }
+        if (existingLauncherArg != null) {
+            launcherPath = existingLauncherArg.replaceFirst(LAUNCHER_PREFIX, "")
+            launcherPathArg = LAUNCHER_PREFIX + launcherPath;
+        }
         else {
             launcherPath = getLaunchPath()
             isLauncher = true
         }
         if (launcherPath == null) return
+        println("Launcher: " + launcherPath)
         currentUpdateStep = getCurrentUpdateStep(args)
         when (currentUpdateStep) {
             UpdateStep.NONE -> {}

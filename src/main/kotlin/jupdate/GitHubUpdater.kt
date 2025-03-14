@@ -50,6 +50,7 @@ abstract class GitHubUpdater(
         args.add("java")
         args.add("-jar")
         args.add(updaterConfig.tempDirectory.resolve(updaterConfig.patcherFileName).toString())
+        args.add(launcherPathArg!!)
         args.add("patch")
         // TODO @important: Unlock
         val processBuilder = ProcessBuilder(args)
@@ -72,6 +73,7 @@ abstract class GitHubUpdater(
         args.add("java")
         args.add("-jar")
         args.add(launcherPath!!)
+        args.add(launcherPathArg!!)
         args.add("clean")
         // TODO @important: Unlock
         val processBuilder = ProcessBuilder(args)

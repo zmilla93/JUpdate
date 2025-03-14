@@ -1,7 +1,6 @@
 package io.github.zmilla93
 
 import io.github.zmilla93.gui.MainFrame
-import io.github.zmilla93.gui.NameTest
 import io.github.zmilla93.jupdate.JarUpdater
 import io.github.zmilla93.jupdate.UpdaterConfig
 import io.github.zmilla93.updater.ProjectProperties
@@ -17,7 +16,7 @@ fun main(args: Array<String>) {
     println("App Launched: ${args.joinToString(separator = ",")}")
     val properties = ProjectProperties()
     val version = AppVersion(properties.version)
-    handleUpdateProcess(args, version)
+//    handleUpdateProcess(args, version)
     SwingUtilities.invokeLater {
         val mainFrame = MainFrame(args, version)
         mainFrame.isVisible = true

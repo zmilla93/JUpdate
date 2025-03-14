@@ -36,10 +36,19 @@ jobs:
           mvn clean compile assembly:single
           copy target/jar/JUpdater.jar JUpdater.jar
 
-      - name: Extract app version from pom.xml
+      - name: Extract Maven Version
+        id: get_version
+        shell: pwsh
         run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          [xml]$pom = Get-Content pom.xml
+          $version = $pom.project.version
+          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+
+#      - name: Extract app version from pom.xml (ubuntu)
+#        run: |
+#          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+#          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
       #      - name: Install jpackage (for Linux)
       #        run: sudo apt-get install -y fakeroot
 

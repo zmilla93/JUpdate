@@ -73,15 +73,15 @@ jobs:
           cp win-msi/JUpdater-${{ env.VERSION }}.msi JUpdater-win-installer.msi
 
       - name: Build Windows Portable
-        shell: bash
+#        shell: bash
         run: |
           mkdir -p dist
-          jpackage \
-            --name JUpdater \
-            --type app-image \
-            --input target/jar \
-            --main-jar JUpdater.jar \
-            --main-class io.github.zmilla93.MainKt \
+          jpackage `
+            --name JUpdater `
+            --type app-image `
+            --input target/jar `
+            --main-jar JUpdater.jar `
+            --main-class io.github.zmilla93.MainKt `
             --dest win-portable
       #          Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
 

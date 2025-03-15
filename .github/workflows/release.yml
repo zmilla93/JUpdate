@@ -17,8 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract app info from maven pom.xml
-        #        id: get_version
+      - name: Extract build info from maven pom.xml
         run: |
           [xml]$pom = Get-Content pom.xml
           $appName = $pom.project.artifactId

@@ -37,8 +37,11 @@ jobs:
           [xml]$pom = Get-Content pom.xml
           $appName = $pom.project.artifactId
           $version = $pom.project.version
+          echo APPNAME
+          echo $appName
           echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+          echo ${{ env.APPNAME }}
 
       #FIXME : This this copy required?
       - name: Build with Maven

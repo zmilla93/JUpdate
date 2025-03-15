@@ -6,7 +6,7 @@ Write-Host $sep
 Write-Host "Running Windows Build Process"
 Write-Host $sep
 
-Write-Host "Reading pom.xml..." -NoNewLine
+Write-Host "Reading pom.xml... " -NoNewLine
 $pomTime = Measure-Command {
 [xml]$pom = Get-Content pom.xml
 $APP_NAME = $pom.project.artifactId
@@ -33,7 +33,7 @@ $jdepsTime = Measure-Command { $JDEPS = jdeps --print-module-deps --ignore-missi
 Write-Host "$("{0:N3}" -f $jdepsTime.TotalSeconds)s"
 Write-Host "Dependencies: $JDEPS"
 
-Write-Host "Building JRE..." -NoNewLine
+Write-Host "Building JRE... " -NoNewLine
 $jlinkTime = Measure-Command {
 jlink `
     --output target/jre `

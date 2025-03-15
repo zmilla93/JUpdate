@@ -1,5 +1,5 @@
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-$mavenOutput = $false
+$mavenOutput = $true
 
 $sep = "--------------------------------------------------"
 Write-Host $sep

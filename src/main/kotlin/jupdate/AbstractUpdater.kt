@@ -121,14 +121,13 @@ abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig
         val list = argsArr.toMutableList()
         val existingLauncherArg = ArgsList.getFullArg(argsArr, LAUNCHER_PREFIX)
         val distribution = ArgsList.getCleanArg(argsArr, DistributionType.ARG_PREFIX)
-        println("found distrib:$distribution")
         distributionType = DistributionType.getType(distribution)
         if (distribution == null) {
             logger.error("No distribution type was set! This app cannot be updated automatically.")
         }
         if (args.containsArgPrefix(LAUNCHER_PREFIX)) launcherPath = args.getCleanArg(LAUNCHER_PREFIX)
         else launcherPath = UpdateUtil.getCurrentProgramPath()
-        println("Launcher" + launcherPath)
+        logger.info("Launcher: $launcherPath")
 //        if (existingLauncherArg != null) {
 //            // Existing launch path
 //            launcherPathArg = existingLauncherArg

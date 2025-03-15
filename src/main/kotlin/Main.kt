@@ -23,7 +23,7 @@ class Main {
             val properties = ProjectProperties()
             val version = AppVersion(properties.version)
 //    val distributionType = DistributionType.getTypeFromArgs(UpdateUtil.getCurrentProgramPath())
-            println("Version: " + properties.version)
+            logger.info("Current Version: " + properties.version)
 //    println("Distribution:" + distributionType)
             handleUpdateProcess(args, version)
             SwingUtilities.invokeLater {
@@ -45,8 +45,12 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     else {
         updater.handleCurrentlyRunningUpdate(args)
         logger.info("Latest Version: " + updater.latestVersion())
-        if (updater.isUpdateAvailable()) updater.startUpdateProcess()
         logger.info("Distribution Type: " + DistributionType.getTypeFromArgs(args))
+        if (updater.isUpdateAvailable()) {
+            updater.startUpdateProcess()
+        }else{
+            logger.info("No update available.")
+        }
         if (updater.wasJustUpdated()) {
             println("Was just updated!")
             return

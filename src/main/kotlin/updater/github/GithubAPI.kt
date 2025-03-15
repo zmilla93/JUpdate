@@ -7,11 +7,17 @@ import updater.IUpdateProgressListener
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
+import java.net.URI
 import java.net.URL
-import java.nio.charset.StandardCharsets
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.nio.file.Files
 import java.nio.file.Path
+import java.security.SecureRandom
+import javax.net.ssl.SSLContext
 import javax.swing.SwingUtilities
+
 
 /**
  * Handles interacting with the GitHub Releases API.
@@ -90,23 +96,38 @@ class GithubAPI(
     private fun fetchDataFromEndpoint(endpoint: String): String? {
         logger.info("Fetching release data from $endpoint...")
         try {
-            val httpConnection = (URL(endpoint).openConnection()) as HttpURLConnection
-            val inputStream: BufferedReader
-            try {
-                inputStream = BufferedReader(InputStreamReader(httpConnection.inputStream, StandardCharsets.UTF_8))
-            } catch (e: FileNotFoundException) {
-                logger.error("File not found. Either the URL is wrong or this repo has no releases.")
-                return null
-            } catch (e: IOException) {
-                logger.error("Failed to connect to GitHub. This is either a connection issue or the API rate limit has been exceeded.")
-                e.printStackTrace()
-                return null
-            }
-            val builder = StringBuilder()
-            while (inputStream.ready()) builder.append(inputStream.readLine())
-            inputStream.close()
-            logger.info("Release data fetched successfully!")
-            return builder.toString()
+            // GitHub API only suppers TSLv1.2
+            val sslContext = SSLContext.getInstance("TLSv1.2")
+            sslContext.init(null, null, SecureRandom())
+            val client: HttpClient = HttpClient.newBuilder()
+                .sslContext(sslContext)
+                .build()
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(endpoint))
+                .GET()
+                .header("Accept", "application/json")
+                .build()
+            val response: HttpResponse<String> = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+            println("DATA: " + response.body())
+            return response.body()
+//            val httpConnection = (URL(endpoint).openConnection()) as HttpURLConnection
+//            val inputStream: BufferedReader
+//            try {
+//                inputStream = BufferedReader(InputStreamReader(httpConnection.inputStream, StandardCharsets.UTF_8))
+//            } catch (e: FileNotFoundException) {
+//                logger.error("File not found. Either the URL is wrong or this repo has no releases.")
+//                return null
+//            } catch (e: IOException) {
+//                logger.error("Failed to connect to GitHub. This is either a connection issue or the API rate limit has been exceeded.")
+//                e.printStackTrace()
+//                return null
+//            }
+//            val builder = StringBuilder()
+//            while (inputStream.ready()) builder.append(inputStream.readLine())
+//            inputStream.close()
+//            logger.info("Release data fetched successfully!")
+//            return builder.toString()
         } catch (e: MalformedURLException) {
             logger.error("Malformed releases URL: $ALL_RELEASES_ENDPOINT")
             e.printStackTrace()

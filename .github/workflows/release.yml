@@ -39,8 +39,8 @@ jobs:
           $version = $pom.project.version
           echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-          echo $version
-          echo $appName
+          echo {$version}
+          echo {$appName}
           echo ${{ env.VERSION }}
           echo ${{ env.APPNAME }}
       #FIXME : This this copy required?
@@ -63,28 +63,28 @@ jobs:
         run: |
           mkdir -p dist
           jpackage \
-            --name "${{ env.APPNAME }}" \
+            --name JUpdate \
             --type msi \
             --input target/jar \
-            --main-jar "${{ env.APPNAME }}.jar" \
+            --main-jar JUpdate.jar" \
             --main-class io.github.zmilla93.MainKt \
-            --app-version ${{ env.VERSION }} \
+            --app-version JUpdate \
             --dest win-msi \
             --win-per-user-install \
             --win-console \
             --win-shortcut-prompt \
             --win-shortcut \
             --win-menu
-          cp win-msi/${{ env.APPNAME }}-${{ env.VERSION }}.msi ${{ env.APPNAME }}-win-installer.msi
+          cp win-msi/JUpdate-${{ env.VERSION }}.msi JUpdate-win-installer.msi
 
       - name: Build Windows Portable
 #        shell: bash
         run: |
           jpackage `
-            --name ${{ env.APPNAME }} `
+            --name JUpdate `
             --type app-image `
             --input target/jar `
-            --main-jar ${{ env.APPNAME }}.jar `
+            --main-jar JUpdate.jar `
             --main-class io.github.zmilla93.MainKt `
             --dest win-portable
       #          Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
@@ -92,14 +92,14 @@ jobs:
       #      FIXME: Combine with previous step?
       - name: Zip the Windows Portable
         #        shell: powershell
-        run: Compress-Archive -Path win-portable/* -Destination ${{ env.APPNAME }}-win-portable.zip
+        run: Compress-Archive -Path win-portable/* -Destination JUpdate-win-portable.zip
 
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          name: ${{ env.PROJECT_NAME }} ${{ env.VERSION }}
+          name: JUpdate ${{ env.VERSION }}
           tag: ${{ env.VERSION }}
-          artifacts: target/jar/${{ env.APPNAME }}.jar, ${{ env.APPNAME }}-win-portable.zip, ${{ env.APPNAME }}-win-installer.msi
+          artifacts: target/jar/JUpdate.jar, JUpdate-win-portable.zip, JUpdate-win-installer.msi
           token: ${{ secrets.GITHUB_TOKEN }}
 
 #  release:

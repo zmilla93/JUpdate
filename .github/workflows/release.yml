@@ -31,18 +31,21 @@ jobs:
           restore-keys: |
             maven-${{ runner.os }}-
 
+      - name: Get App Version
+        id: get_version
+        run: |
+          [xml]$pom = Get-Content pom.xml
+          $appName = $pom.project.artifactId
+          $version = $pom.project.version
+          echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+
       #FIXME : This this copy required?
       - name: Build with Maven
         run: |
           mvn clean compile assembly:single
       #          copy target/jar/JUpdater.jar JUpdater.jar
 
-      - name: Get App Version
-        id: get_version
-        run: |
-          [xml]$pom = Get-Content pom.xml
-          $version = $pom.project.version
-          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
 
       #      - name: Extract app version from pom.xml (ubuntu)
       #        run: |
@@ -57,10 +60,10 @@ jobs:
         run: |
           mkdir -p dist
           jpackage \
-            --name JUpdater \
+            --name ${{ env.APPNAME }} \
             --type msi \
             --input target/jar \
-            --main-jar JUpdater.jar \
+            --main-jar ${{ env.APPNAME }}.jar \
             --main-class io.github.zmilla93.MainKt \
             --app-version ${{ env.VERSION }} \
             --dest win-msi \
@@ -69,16 +72,16 @@ jobs:
             --win-shortcut-prompt \
             --win-shortcut \
             --win-menu
-          cp win-msi/JUpdater-${{ env.VERSION }}.msi JUpdater-win-installer.msi
+          cp win-msi/${{ env.APPNAME }}-${{ env.VERSION }}.msi ${{ env.APPNAME }}-win-installer.msi
 
       - name: Build Windows Portable
 #        shell: bash
         run: |
           jpackage `
-            --name JUpdater `
+            --name ${{ env.APPNAME }} `
             --type app-image `
             --input target/jar `
-            --main-jar JUpdater.jar `
+            --main-jar ${{ env.APPNAME }}.jar `
             --main-class io.github.zmilla93.MainKt `
             --dest win-portable
       #          Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
@@ -86,14 +89,14 @@ jobs:
       #      FIXME: Combine with previous step?
       - name: Zip the Windows Portable
         #        shell: powershell
-        run: Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
+        run: Compress-Archive -Path win-portable/* -Destination ${{ env.APPNAME }}-win-portable.zip
 
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
           name: ${{ env.PROJECT_NAME }} ${{ env.VERSION }}
           tag: ${{ env.VERSION }}
-          artifacts: target/jar/JUpdater.jar, JUpdater-win-portable.zip, JUpdater-win-installer.msi
+          artifacts: target/jar/${{ env.APPNAME }}.jar, ${{ env.APPNAME }}-win-portable.zip, ${{ env.APPNAME }}-win-installer.msi
           token: ${{ secrets.GITHUB_TOKEN }}
 
 #  release:

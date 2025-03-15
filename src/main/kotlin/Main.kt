@@ -12,6 +12,8 @@ import javax.swing.SwingUtilities
 
 //val updateManager: UpdateManager
 
+val enableUpdater = false
+
 
 fun main(args: Array<String>) {
 
@@ -21,7 +23,6 @@ fun main(args: Array<String>) {
 //    val distributionType = DistributionType.getTypeFromArgs(UpdateUtil.getCurrentProgramPath())
     println("Version: " + properties.version)
 //    println("Distribution:" + distributionType)
-
     handleUpdateProcess(args, version)
     SwingUtilities.invokeLater {
         val mainFrame = MainFrame(args, version)

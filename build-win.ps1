@@ -12,9 +12,9 @@ Write-Host "Main: $MAIN_CLASS"
 Write-Host "Building JAR..."
 mvn clean compile assembly:single
 
-Write-Host "Running jeps..."
+Write-Host "Running JDEPS..."
 $JDEPS = jdeps --print-module-deps --ignore-missing-deps target/jar/$APP_NAME.jar
-Write-Host "JDEPS: $JDEPS"
+Write-Host "Dependencies: $JDEPS"
 
 Write-Host "Building JRE..."
 jlink `
@@ -33,9 +33,10 @@ jpackage --type app-image `
     --runtime-image target/jre `
     --input target/jar `
     --dest target/win-portable `
+    --arguments '--distribution-type:win-portable' `
     --win-console
 
-Write-Host "Building Windows Installer (MSI)..."
+Write-Host "Building Windows Installer..."
 jpackage --type msi `
     --name "$APP_NAME" `
     --main-jar "$APP_NAME.jar" `
@@ -44,10 +45,13 @@ jpackage --type msi `
     --runtime-image target/jre `
     --input target/jar `
     --dest target/win-msi `
+    --arguments '--distribution-type:win-msi' `
     --win-per-user-install `
     --win-console `
     --win-shortcut-prompt `
     --win-shortcut `
     --win-menu
 
+Write-Host "======================"
 Write-Host "Build Process Complete"
+Write-Host "======================"

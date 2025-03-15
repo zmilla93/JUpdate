@@ -6,7 +6,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import kotlin.system.exitProcess
 
-class JarUpdater(config: UpdaterConfig, githubConfig: GitHubConfig) : AbstractGitHubUpdater(config, githubConfig) {
+class JarUpdater(args:Array<String>, config: UpdaterConfig, githubConfig: GitHubConfig) : AbstractGitHubUpdater(args, config, githubConfig) {
 
     override fun unpack(): Boolean {
         // Do nothing

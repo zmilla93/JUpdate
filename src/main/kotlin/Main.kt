@@ -5,7 +5,6 @@ import io.github.zmilla93.jupdate.*
 import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.ProjectProperties
 import updater.data.AppVersion
-import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 import javax.swing.SwingUtilities
 
@@ -30,17 +29,17 @@ fun main(args: Array<String>) {
 //    val path = File(".").canonicalPath
 //    println("LaunchTest1: $path")
 //    println("LaunchTest2: ${System.getProperty("user.dir")}")
-    val msiPatcher = object {}.javaClass.getResourceAsStream("/msi-patcher.ps1")
-    if (msiPatcher != null) {
-        val text = msiPatcher.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
-        println(text)
-        UpdateUtil.copyResourceToDisk(
-            "msi-patcher.ps1",
-            Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp\\test")
-        )
-    } else {
-        System.err.println("Missing MSI Patcher!!!")
-    }
+//    val msiPatcher = object {}.javaClass.getResourceAsStream("/msi-patcher.ps1")
+//    if (msiPatcher != null) {
+//        val text = msiPatcher.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
+//        println(text)
+//        UpdateUtil.copyResourceToDisk(
+//            "msi-patcher.ps1",
+//            Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp\\test")
+//        )
+//    } else {
+//        System.err.println("Missing MSI Patcher!!!")
+//    }
 }
 
 fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
@@ -49,7 +48,6 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     val tempDir = Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp")
 
 //    val updaterConfig =
-    System.err.println("updater disabled")
     val updater = createUpdater(args, currentVersion)
     if (updater == null) System.err.println("Updater is null!")
     else {
@@ -66,15 +64,19 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
 
 fun createUpdater(args: Array<String>, currentVersion: AppVersion): AbstractUpdater? {
     val jarName = "JUpdate.jar"
+    val msiName = "JUpdate-win-portable.jar"
     val githubConfig = GitHubConfig("zmilla93", "JUpdate")
     // FIXME : TEMP DIR
-    val tempDir = Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp")
+//    val args
+    val tempDir = Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp\\")
     val jarConfig = UpdaterConfig(currentVersion, arrayOf(jarName), jarName, tempDir)
-    var updater: AbstractGitHubUpdater;
+    val msiConfig = UpdaterConfig(currentVersion, arrayOf(msiName), msiName, tempDir)
+    var updater: AbstractGitHubUpdater
     val distributionType = DistributionType.getTypeFromArgs(args)
     when (distributionType) {
         DistributionType.NONE -> return null
-        DistributionType.JAR -> return JarUpdater(jarConfig, githubConfig)
+        DistributionType.WIN_MSI -> return MSIUpdater(args, msiConfig, githubConfig)
+        DistributionType.JAR -> return JarUpdater(args, jarConfig, githubConfig)
         else -> return null
     }
 

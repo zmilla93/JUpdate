@@ -7,6 +7,7 @@ import java.nio.file.Path
 open class UpdaterConfig(
     /** The [AppVersion] of the currently running program. */
     val currentVersion: AppVersion,
+    // FIXME : Switch to an abstract getDownloadTargets():DownloadTarget[] better flexability
     /** One or more files that will be downloaded into the temp directory and then unpacked if needed. */
     val assetNames: Array<String>,
     /** The name of the patcher file inside the temp directory that will run after unpacking. */

@@ -1,7 +1,7 @@
 package io.github.zmilla93.jupdate
 
-class MSIUpdater(config: UpdaterConfig, githubConfig: GitHubConfig) :
-    AbstractGitHubUpdater(config, githubConfig) {
+class MSIUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHubConfig) :
+    AbstractGitHubUpdater(args, config, githubConfig) {
 
     companion object {
         const val patcher = "msi-patcher.ps1"
@@ -12,7 +12,7 @@ class MSIUpdater(config: UpdaterConfig, githubConfig: GitHubConfig) :
     }
 
     override fun runPatch() {
-        UpdateUtil.runNewProcess(config.tempDirectory.resolve(patcher).toString())
+        UpdateUtil.runNewProcess(config.tempDirectory.resolve(patcher).toString(), args.toString())
     }
 
     override fun patch(): Boolean {

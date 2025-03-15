@@ -10,15 +10,15 @@ import org.slf4j.LoggerFactory
  * Patching happens from a temporary process, and clean is run on the newly installed
  * process, which is handled with runPatch and runClean.
  */
-abstract class AbstractUpdater(config: UpdaterConfig) {
+abstract class AbstractUpdater(argsArr: Array<String>, config: UpdaterConfig) {
 
     /** Returns true when a new update is available. */
     abstract fun isUpdateAvailable(): Boolean
 
     /** Path to the originally running program */
+    val args = ArgsList(argsArr)
     var launcherPath: String? = null
     var launcherPathArg: String? = null
-    var isLauncher = false;
     var currentUpdateStep = UpdateStep.NONE
     private var wasJustUpdated = false
     protected val logger = LoggerFactory.getLogger(javaClass.simpleName)
@@ -111,28 +111,30 @@ abstract class AbstractUpdater(config: UpdaterConfig) {
      * Checks if an existing launcher path was supplied by the program arguments.
      * If not, set it using the currently running program.
      */
-    private fun validateLauncherPath(args: Array<String>): Array<String> {
-        val list = args.toMutableList()
-        val existingLauncherArg = ArgsList.getFullArg(args, LAUNCHER_PREFIX)
-        val distribution = ArgsList.getCleanArg(args, DistributionType.ARG_PREFIX)
+    private fun validateLauncherPath(argsArr: Array<String>): Array<String> {
+        val list = argsArr.toMutableList()
+        val existingLauncherArg = ArgsList.getFullArg(argsArr, LAUNCHER_PREFIX)
+        val distribution = ArgsList.getCleanArg(argsArr, DistributionType.ARG_PREFIX)
         println("found distrib:$distribution")
         distributionType = DistributionType.getType(distribution)
         if (distribution == null) {
             logger.error("No distribution type was set! This app cannot be updated automatically.")
         }
-        if (existingLauncherArg != null) {
-            // Existing launch path
-            launcherPathArg = existingLauncherArg
-            launcherPath = ArgsList.cleanArg(existingLauncherArg, LAUNCHER_PREFIX)
-        } else {
-            // Use current program as launcher
-            launcherPath = UpdateUtil.getCurrentProgramPath()
-            launcherPathArg = LAUNCHER_PREFIX + launcherPath;
-            isLauncher = true
-            list.add(launcherPathArg!!)
-            return list.toTypedArray()
-        }
-        return args
+        if (args.containsArgPrefix(LAUNCHER_PREFIX)) launcherPath = args.getCleanArg(LAUNCHER_PREFIX)
+        else launcherPath = UpdateUtil.getCurrentProgramPath()
+        println("Launcher" + launcherPath)
+//        if (existingLauncherArg != null) {
+//            // Existing launch path
+//            launcherPathArg = existingLauncherArg
+//            launcherPath = ArgsList.cleanArg(existingLauncherArg, LAUNCHER_PREFIX)
+//        } else {
+//            // Use current program as launcher
+//            launcherPath = UpdateUtil.getCurrentProgramPath()
+//            launcherPathArg = LAUNCHER_PREFIX + launcherPath
+//            list.add(launcherPathArg!!)
+//            return list.toTypedArray()
+//        }
+        return argsArr
     }
 
 //    private fun getFullArg(args: Array<String>, argPrefix: String): String? {

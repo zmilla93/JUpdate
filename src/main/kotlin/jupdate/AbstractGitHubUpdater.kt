@@ -5,32 +5,32 @@ import updater.data.AppVersion
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
-import kotlin.system.exitProcess
 
 abstract class AbstractGitHubUpdater(
+    args: Array<String>,
     val config: UpdaterConfig,
     githubConfig: GitHubConfig
-) : AbstractUpdater(config) {
+) : AbstractUpdater(args, config) {
 
-    val github = GithubAPI(githubConfig)
+    private val githubAPI = GithubAPI(githubConfig)
 
     override fun isUpdateAvailable(): Boolean {
-        val latestRelease = github.latestRelease() ?: return false
+        val latestRelease = githubAPI.latestRelease() ?: return false
         val latestVersion = AppVersion(latestRelease.tag_name)
         return config.currentVersion != latestVersion
     }
 
     override fun download(): Boolean {
-        if (github.latestRelease() == null) return false
+        if (githubAPI.latestRelease() == null) return false
         if (config.assetNames.isEmpty()) throw RuntimeException("No download targets specified.")
         for (target in config.assetNames) {
             logger.info("Attempting to download '${target}'...")
-            val asset = github.latestRelease()!!.findAssetByName(target)
+            val asset = githubAPI.latestRelease()!!.findAssetByName(target)
             if (asset == null) {
                 logger.error("Asset '${target}' not found!")
                 return false
             }
-            val success = github.downloadFile(
+            val success = githubAPI.downloadFile(
                 asset.browser_download_url,
                 config.tempDirectory.resolve(target)
             )

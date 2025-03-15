@@ -22,6 +22,7 @@ class UpdateUtil {
          *  Returns the full path of the currently running program.
          *  Used at the start of the updating process to save the original launch path.
          */
+        // FIXME : This function is old, see if there is a better way to do things
         fun getCurrentProgramPath(): String {
             if (!hasCachedProgramPath) {
                 try {
@@ -31,6 +32,7 @@ class UpdateUtil {
                     cachedProgramPath = path.replace("[/\\\\]".toRegex(), Matcher.quoteReplacement(File.separator))
                     hasCachedProgramPath = true
                 } catch (e: URISyntaxException) {
+                    // FIXME@important : Should handle this error better
                     throw RuntimeException("Failed to get program path!")
                 }
             }
@@ -44,11 +46,18 @@ class UpdateUtil {
                 UpdateUtil::class.java.getResourceAsStream(prefix + sourceStr)
                     ?: throw java.lang.RuntimeException("Resource not found: $sourceStr")
             try {
-                Files.createDirectories(destination.parent)
+                println("Resource: " + sourceStr)
+                println("Creating Dir: " + destination.parent)
+                val dir = Files.createDirectories(destination.parent)
+                val src = Paths.get(sourceStr);
+                println("Result dir: " + dir)
                 val reader = BufferedReader(InputStreamReader(stream, StandardCharsets.UTF_8))
-                val writer =
-                    Files.newOutputStream(destination.resolve(Paths.get(sourceStr)))
-                        .bufferedWriter(StandardCharsets.UTF_8)
+                val output = destination.resolve(sourceStr)
+                println("dest: $destination")
+                println("src: $sourceStr")
+                println("srcP: $src")
+                println("out: $output")
+                val writer = Files.newOutputStream(output).bufferedWriter(StandardCharsets.UTF_8)
                 while (reader.ready()) writer.write(reader.readLine())
                 reader.close()
                 writer.close()

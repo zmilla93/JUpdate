@@ -54,7 +54,7 @@ jpackage --type app-image `
     --runtime-image target/jre `
     --input target/jar `
     --dest target/win-portable `
-    --arguments '--distribution-type:win-portable' `
+    --arguments '--distribution:win-portable' `
     --win-console
 }
 Write-Host "$("{0:N2}" -f $portableTime.TotalSeconds)s"
@@ -69,7 +69,7 @@ jpackage --type msi `
     --runtime-image target/jre `
     --input target/jar `
     --dest target/win-msi `
-    --arguments '--distribution-type:win-msi' `
+    --arguments '--distribution:win-msi' `
     --win-per-user-install `
     --win-console `
     --win-shortcut-prompt `

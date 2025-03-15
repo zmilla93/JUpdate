@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory
 
 /**
  * Represents currently supported distribution types.
- * Distribution type is set via the program argument --distribution-type:TYPE
+ * Distribution type is set via the program argument --distribution:TYPE
  * TYPE is the enum name, to lower case, and "_" replaced with "-".
- * IE WIN_MSI uses "--distribution-type:win-msi".
+ * IE WIN_MSI uses "--distribution:win-msi".
  * This value must be passed to jpackage using "--arguments" when building for a specific platform.
  */
 enum class DistributionType {
@@ -22,7 +22,7 @@ enum class DistributionType {
 
     companion object {
 
-        const val ARG_PREFIX = "--distribution-type:"
+        const val ARG_PREFIX = "--distribution:"
         val logger = LoggerFactory.getLogger(DistributionType::class.simpleName)
 
         fun getType(value: String?): DistributionType {

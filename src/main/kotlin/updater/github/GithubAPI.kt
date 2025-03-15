@@ -1,6 +1,7 @@
 package io.github.zmilla93.updater.github
 
 import com.google.gson.Gson
+import io.github.zmilla93.jupdate.GitHubConfig
 import org.slf4j.LoggerFactory
 import updater.IUpdateProgressListener
 import java.io.*
@@ -23,6 +24,9 @@ class GithubAPI(
     repo: String,
     var allowPreRelease: Boolean = false
 ) {
+
+    constructor(config: GitHubConfig) : this(config.author, config.repo)
+
     // GitHub API Endpoints
     private val ALL_RELEASES_ENDPOINT: String = "https://api.github.com/repos/$author/$repo/releases"
     private val LATEST_RELEASE_ENDPOINT: String = "https://api.github.com/repos/$author/$repo/releases/latest"

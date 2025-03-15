@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
  * Patching happens from a temporary process, and clean is run on the newly installed
  * process, which is handled with runPatch and runClean.
  */
-abstract class AbstractUpdater {
+abstract class AbstractUpdater(config: UpdaterConfig) {
 
     /** Returns true when a new update is available. */
     abstract fun isUpdateAvailable(): Boolean

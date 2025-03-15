@@ -8,19 +8,16 @@ import java.nio.file.attribute.BasicFileAttributes
 import kotlin.system.exitProcess
 
 abstract class AbstractGitHubUpdater(
-    author: String,
-    repo: String,
-    private val currentVersion: AppVersion,
-    val config: GitHubUpdaterConfig,
-    allowPreReleases: Boolean = false
-) : AbstractUpdater() {
+    val config: UpdaterConfig,
+    val githubConfig: GitHubConfig
+) : AbstractUpdater(config) {
 
-    val github = GithubAPI(author, repo)
+    val github = GithubAPI(githubConfig)
 
     override fun isUpdateAvailable(): Boolean {
         val latestRelease = github.latestRelease() ?: return false
         val latestVersion = AppVersion(latestRelease.tag_name)
-        return currentVersion != latestVersion
+        return config.currentVersion != latestVersion
     }
 
     override fun download(): Boolean {

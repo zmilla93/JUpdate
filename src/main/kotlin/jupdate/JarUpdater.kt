@@ -1,18 +1,11 @@
 package io.github.zmilla93.jupdate
 
-import updater.data.AppVersion
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
-class JarUpdater(
-    author: String,
-    repo: String,
-    currentVersion: AppVersion,
-    updaterConfig: GitHubUpdaterConfig,
-    allowPreReleases: Boolean = false
-) : AbstractGitHubUpdater(author, repo, currentVersion, updaterConfig, allowPreReleases) {
+class JarUpdater(config: UpdaterConfig, githubConfig: GitHubConfig) : AbstractGitHubUpdater(config, githubConfig) {
 
     override fun unpack(): Boolean {
         // Do nothing

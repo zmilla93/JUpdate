@@ -1,7 +1,12 @@
 package io.github.zmilla93.jupdate
 
-import java.io.File
+import org.slf4j.LoggerFactory
+import java.io.*
 import java.net.URISyntaxException
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.regex.Matcher
 
 class UpdateUtil {
@@ -10,6 +15,7 @@ class UpdateUtil {
 
         var cachedProgramPath = ""
         var hasCachedProgramPath = false
+        val logger = LoggerFactory.getLogger(UpdateUtil::class.java.simpleName)
 
         /**
          *  Returns the full path of the currently running program.
@@ -28,6 +34,27 @@ class UpdateUtil {
                 }
             }
             return cachedProgramPath
+        }
+
+        // FIXME : Make this work with nested resources, and with/without starting slash
+        fun copyResourceToDisk(sourceStr: String, destination: Path): Path {
+            val prefix = if (sourceStr.startsWith("/")) "" else "/"
+            val stream: InputStream =
+                UpdateUtil::class.java.getResourceAsStream(prefix + sourceStr)
+                    ?: throw java.lang.RuntimeException("Resource not found: $sourceStr")
+            try {
+                Files.createDirectories(destination.parent)
+                val reader = BufferedReader(InputStreamReader(stream, StandardCharsets.UTF_8))
+                val writer =
+                    Files.newOutputStream(destination.resolve(Paths.get(sourceStr)))
+                        .bufferedWriter(StandardCharsets.UTF_8)
+                while (reader.ready()) writer.write(reader.readLine())
+                reader.close()
+                writer.close()
+            } catch (e: IOException) {
+                throw java.lang.RuntimeException(e)
+            }
+            return destination
         }
     }
 

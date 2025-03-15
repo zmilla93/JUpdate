@@ -5,8 +5,11 @@ on:
   push:
     branches: [ "master" ]
 
-#env:
-#  PROJECT_NAME: UpdateApp
+# Variables could be hard coded here
+env:
+  JAVA_VERSION: 21
+#  APPNAME: MyAppName
+#  VERSION: 0.0.1
 
 jobs:
   build:
@@ -23,13 +26,11 @@ jobs:
           $appName = $pom.project.artifactId
           $version = $pom.project.version
           $javaVersion = $pom.project.properties."java-version"
-          echo "$appName v$version"
-          echo "Java $javaVersion"
           echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "JAVA_VERSION=$javaVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: Set up JDK
+      - name: Java Setup
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
@@ -44,8 +45,8 @@ jobs:
             maven-${{ runner.os }}-
 
 #          echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-      #FIXME : This this copy required?
-      - name: Build with Maven
+      #FIXME : Is this copy required?
+      - name: Build Jar with Maven
         run: |
           mvn clean compile assembly:single
       #          copy target/jar/JUpdater.jar JUpdater.jar
@@ -59,7 +60,7 @@ jobs:
       #      - name: Install jpackage (for Linux)
       #        run: sudo apt-get install -y fakeroot
 
-      - name: Build Windows Portable
+      - name: Build Windows Portable with jpackage
         run: |
           jpackage `
             --name ${{ env.APPNAME }} `
@@ -71,7 +72,7 @@ jobs:
           Compress-Archive -Path win-portable/* -Destination ${{ env.APPNAME }}-win-portable.zip
 
 # FIXME : Build to dest?
-      - name: Build Windows Installer (MSI)
+      - name: Build Windows Installer (MSI) with
         run: |
           jpackage `
             --name ${{ env.APPNAME }} `

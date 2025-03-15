@@ -52,4 +52,4 @@ jpackage --type msi `
     --win-shortcut `
     --win-menu
 
-Write-Host "Build process completed successfully!"
+Write-Host "Build Process Complete"

@@ -62,7 +62,7 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
 
 fun createUpdater(args: Array<String>, currentVersion: AppVersion): AbstractUpdater? {
     val jarName = "JUpdate.jar"
-    val msiName = "JUpdate-win-portable.jar"
+    val msiName = "JUpdate-win-portable.msi"
     val githubConfig = GitHubConfig("zmilla93", "JUpdate")
     // FIXME : TEMP DIR
 //    val args

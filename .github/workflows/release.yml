@@ -39,6 +39,8 @@ jobs:
           $version = $pom.project.version
           echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+          echo {$version}
+          echo {$appName}
       #FIXME : This this copy required?
       - name: Build with Maven
         run: |
@@ -55,23 +57,22 @@ jobs:
       #        run: sudo apt-get install -y fakeroot
 
       - name: Build Windows Installer
-        shell: bash
+#        shell: bash
         run: |
-          mkdir -p dist
-          jpackage \
-            --name JUpdate \
-            --type msi \
-            --input target/jar \
-            --main-jar JUpdate.jar" \
-            --main-class io.github.zmilla93.MainKt \
-            --app-version JUpdate \
-            --dest win-msi \
-            --win-per-user-install \
-            --win-console \
-            --win-shortcut-prompt \
-            --win-shortcut \
+          jpackage `
+            --name JUpdate `
+            --type msi `
+            --input target/jar `
+            --main-jar JUpdate.jar" `
+            --main-class io.github.zmilla93.MainKt `
+            --app-version JUpdate `
+            --dest win-msi `
+            --win-per-user-install `
+            --win-console `
+            --win-shortcut-prompt `
+            --win-shortcut `
             --win-menu
-          cp win-msi/JUpdate-${{ env.VERSION }}.msi JUpdate-win-installer.msi
+          copy win-msi/JUpdate-${{ env.VERSION }}.msi JUpdate-win-installer.msi
 
       - name: Build Windows Portable
         run: |
@@ -82,7 +83,7 @@ jobs:
             --main-jar JUpdate.jar `
             --main-class io.github.zmilla93.MainKt `
             --dest win-portable
-      #          Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
+          Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
 
       #      FIXME: Combine with previous step?
       - name: Zip the Windows Portable

@@ -57,39 +57,40 @@ jobs:
       #      - name: Install jpackage (for Linux)
       #        run: sudo apt-get install -y fakeroot
 
-      - name: Build Windows Installer
-#        shell: bash
+      - name: Build Windows Portable
         run: |
           jpackage `
-            --name JUpdate `
+            --name ${{ env.APPNAME }} `
+            --type app-image `
+            --input target/jar `
+            --main-jar ${{ env.APPNAME }}.jar `
+            --main-class io.github.zmilla93.MainKt `
+            --dest win-portable
+          Compress-Archive -Path win-portable/* -Destination ${{ env.APPNAME }}-win-portable.zip
+
+      - name: Build Windows Installer (MSI)
+        run: |
+          jpackage `
+            --name ${{ env.APPNAME }} `
             --type msi `
             --input target/jar `
-            --main-jar JUpdate.jar `
+            --main-jar ${{ env.APPNAME }}.jar `
             --main-class io.github.zmilla93.MainKt `
-            --app-version 0.0.1 `
+            --app-version ${{ env.VERSION }} `
             --dest win-msi `
             --win-per-user-install `
             --win-console `
             --win-shortcut-prompt `
             --win-shortcut `
             --win-menu
-          copy win-msi/JUpdate-0.0.1.msi JUpdate-win-installer.msi
+          copy win-msi/JUpdate-${{ env.VERSION }}.msi JUpdate-win-installer.msi
 
-      - name: Build Windows Portable
-        run: |
-          jpackage `
-            --name JUpdate `
-            --type app-image `
-            --input target/jar `
-            --main-jar JUpdate.jar `
-            --main-class io.github.zmilla93.MainKt `
-            --dest win-portable
-          Compress-Archive -Path win-portable/* -Destination JUpdater-win-portable.zip
 
-      #      FIXME: Combine with previous step?
-      - name: Zip the Windows Portable
-        #        shell: powershell
-        run: Compress-Archive -Path win-portable/* -Destination JUpdate-win-portable.zip
+
+#      #      FIXME: Combine with previous step?
+#      - name: Zip the Windows Portable
+#        #        shell: powershell
+#        run: Compress-Archive -Path win-portable/* -Destination JUpdate-win-portable.zip
 
       - name: Create release
         uses: ncipollo/release-action@v1

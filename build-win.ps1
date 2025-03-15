@@ -1,5 +1,8 @@
+$stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+
 Write-Host $path
-Write-Host "Reading pom.xml..."
+Write-Host "Reading pom.xml..." -NoNewline
+$time = Measure-Command {
 [xml]$pom = Get-Content pom.xml
 $APP_NAME = $pom.project.artifactId
 $APP_VERSION = $pom.project.version
@@ -8,15 +11,21 @@ $JAVA_VERSION = $pom.project.properties."java-version"
 Write-Host "Java: $JAVA_VERSION"
 Write-Host "App: $APP_NAME v$APP_VERSION"
 Write-Host "Main: $MAIN_CLASS"
+}
+Write-Host "$("{0:N3}" -f $time.TotalSeconds)s"
 
-Write-Host "Building JAR..."
+Write-Host "Building JAR... "
 mvn clean compile assembly:single
 
-Write-Host "Running JDEPS..."
+Write-Host "Running JDEPS... " -NoNewline
+$time = Measure-Command {
 $JDEPS = jdeps --print-module-deps --ignore-missing-deps target/jar/$APP_NAME.jar
+}
+Write-Host "$("{0:N3}" -f $time.TotalSeconds)s"
 Write-Host "Dependencies: $JDEPS"
 
 Write-Host "Building JRE..."
+$time = Measure-Command {
 jlink `
     --output target/jre `
     --strip-native-commands `
@@ -24,8 +33,11 @@ jlink `
     --no-man-pages `
     --no-header-files `
     --add-modules $JDEPS
+}
+Write-Host "$("{0:N3}" -f $time.TotalSeconds)s"
 
-Write-Host "Building Windows Portable..."
+Write-Host "Building Windows Portable... " -NoNewline
+$time = Measure-Command {
 jpackage --type app-image `
     --name JUpdater `
     --main-jar JUpdate.jar `
@@ -35,8 +47,11 @@ jpackage --type app-image `
     --dest target/win-portable `
     --arguments '--distribution-type:win-portable' `
     --win-console
+}
+Write-Host "$("{0:N3}" -f $time.TotalSeconds)s"
 
-Write-Host "Building Windows Installer..."
+Write-Host "Building Windows Installer... "
+$time = Measure-Command {
 jpackage --type msi `
     --name "$APP_NAME" `
     --main-jar "$APP_NAME.jar" `
@@ -51,7 +66,10 @@ jpackage --type msi `
     --win-shortcut-prompt `
     --win-shortcut `
     --win-menu
+}
+Write-Host "$("{0:N3}" -f $time.TotalSeconds)s"
 
 Write-Host "======================"
 Write-Host "Build Process Complete"
+Write-Host "Total Time: $($stopwatch.Elapsed.TotalSeconds)s"
 Write-Host "======================"

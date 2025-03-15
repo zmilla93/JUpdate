@@ -43,7 +43,7 @@ jlink `
     --no-header-files `
     --add-modules $JDEPS
 }
-Write-Host "$("{0:N3}" -f $jlinkTime.TotalSeconds)s"
+Write-Host "$("{0:N2}" -f $jlinkTime.TotalSeconds)s"
 
 Write-Host "Building Windows Portable... " -NoNewline
 $portableTime = Measure-Command {
@@ -57,7 +57,7 @@ jpackage --type app-image `
     --arguments '--distribution-type:win-portable' `
     --win-console
 }
-Write-Host "$("{0:N3}" -f $portableTime.TotalSeconds)s"
+Write-Host "$("{0:N2}" -f $portableTime.TotalSeconds)s"
 
 Write-Host "Building Windows Installer... " -NoNewLine
 $msiTime = Measure-Command {
@@ -76,16 +76,16 @@ jpackage --type msi `
     --win-shortcut `
     --win-menu
 }
-Write-Host "$("{0:N3}" -f $msiTime.TotalSeconds)s"
+Write-Host "$("{0:N2}" -f $msiTime.TotalSeconds)s"
 
 Write-Host $sep
 Write-Host "Build Process Complete"
 Write-Host $sep
-Write-Host ".jar     : $("{0:N3}" -f $jarTime.TotalSeconds)s"
-Write-Host "jdeps    : $("{0:N3}" -f $jdepsTime.TotalSeconds)s"
-Write-Host "jlink    : $("{0:N3}" -f $jlinkTime.TotalSeconds)s"
-Write-Host "portable : $("{0:N3}" -f $portableTime.TotalSeconds)s"
-Write-Host "msi      : $("{0:N3}" -f $msiTime.TotalSeconds)s"
+Write-Host ".jar     : $("{0:N2}" -f $jarTime.TotalSeconds)s"
+Write-Host "jdeps    : $("{0:N2}" -f $jdepsTime.TotalSeconds)s"
+Write-Host "jlink    : $("{0:N2}" -f $jlinkTime.TotalSeconds)s"
+Write-Host "portable : $("{0:N2}" -f $portableTime.TotalSeconds)s"
+Write-Host "msi      : $("{0:N2}" -f $msiTime.TotalSeconds)s"
 Write-Host $sep
-Write-Host "Total    : $("{0:N3}" -f $stopwatch.Elapsed.TotalSeconds)s"
+Write-Host "Total    : $("{0:N2}" -f $stopwatch.Elapsed.TotalSeconds)s"
 Write-Host $sep

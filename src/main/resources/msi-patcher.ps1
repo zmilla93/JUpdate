@@ -28,4 +28,6 @@ if ($null -eq $installer)
 # Run the new installer while displaying a progress bar
 Start-Process -FilePath ".\$installer" -ArgumentList "/passive" -Wait
 # Launch the newly installed program
-Start-Process $launcher
+$newArgs = $args + "clean"
+Write-Host $newArgs
+Start-Process $launcher -ArgumentList $newArgs

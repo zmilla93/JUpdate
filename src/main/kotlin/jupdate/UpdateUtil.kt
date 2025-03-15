@@ -8,6 +8,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.regex.Matcher
+import kotlin.system.exitProcess
 
 class UpdateUtil {
 
@@ -37,7 +38,7 @@ class UpdateUtil {
         }
 
         // FIXME : Make this work with nested resources, and with/without starting slash
-        fun copyResourceToDisk(sourceStr: String, destination: Path): Path {
+        fun copyResourceToDisk(sourceStr: String, destination: Path): Boolean {
             val prefix = if (sourceStr.startsWith("/")) "" else "/"
             val stream: InputStream =
                 UpdateUtil::class.java.getResourceAsStream(prefix + sourceStr)
@@ -51,11 +52,28 @@ class UpdateUtil {
                 while (reader.ready()) writer.write(reader.readLine())
                 reader.close()
                 writer.close()
+                return true
             } catch (e: IOException) {
-                throw java.lang.RuntimeException(e)
+                e.printStackTrace()
+                logger.error("IOException while copying resources to disk!")
             }
-            return destination
+            return false
         }
+
+        fun runNewProcess(vararg args: String) {
+            runNewProcess(*args)
+        }
+
+        /** Starts a new process while terminating the currently running program. */
+        fun runNewProcess(args: ArrayList<String>) {
+            // TODO @important: Unlock (or closeCurrentProcess?)
+            val processBuilder = ProcessBuilder(args)
+            processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+            processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
+            processBuilder.start()
+            exitProcess(0)
+        }
+
     }
 
 }

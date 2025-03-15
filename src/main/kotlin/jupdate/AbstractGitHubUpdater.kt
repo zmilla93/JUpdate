@@ -9,7 +9,7 @@ import kotlin.system.exitProcess
 
 abstract class AbstractGitHubUpdater(
     val config: UpdaterConfig,
-    val githubConfig: GitHubConfig
+    githubConfig: GitHubConfig
 ) : AbstractUpdater(config) {
 
     val github = GithubAPI(githubConfig)
@@ -23,16 +23,16 @@ abstract class AbstractGitHubUpdater(
     override fun download(): Boolean {
         if (github.latestRelease() == null) return false
         if (config.assetNames.isEmpty()) throw RuntimeException("No download targets specified.")
-        for (assetName in config.assetNames) {
-            logger.info("Attempting to download '$assetName'...")
-            val asset = github.latestRelease()!!.findAssetByName(assetName)
+        for (target in config.assetNames) {
+            logger.info("Attempting to download '${target}'...")
+            val asset = github.latestRelease()!!.findAssetByName(target)
             if (asset == null) {
-                logger.error("Asset '$assetName' not found!")
+                logger.error("Asset '${target}' not found!")
                 return false
             }
             val success = github.downloadFile(
                 asset.browser_download_url,
-                config.tempDirectory.resolve(assetName)
+                config.tempDirectory.resolve(target)
             )
             if (!success) return false
         }
@@ -42,23 +42,6 @@ abstract class AbstractGitHubUpdater(
 //    override fun unpack(): Boolean {
 //        TODO("Not yet implemented")
 //    }
-
-    override fun runPatch() {
-        val args = ArrayList<String>()
-        // TODO @important: Add launcher
-        args.add("java")
-        args.add("-jar")
-        args.add(config.tempDirectory.resolve(config.patcherFileName).toString())
-        args.add(launcherPathArg!!)
-        args.add("patch")
-        // TODO @important: Unlock
-        val processBuilder = ProcessBuilder(args)
-        processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-        processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
-        processBuilder.redirectOutput()
-        processBuilder.start()
-        exitProcess(0)
-    }
 
 //    override fun patch(): Boolean {
 ////        updaterConfig.patchTarget
@@ -75,12 +58,13 @@ abstract class AbstractGitHubUpdater(
         args.add(launcherPath!!)
         args.add(launcherPathArg!!)
         args.add("clean")
+        UpdateUtil.runNewProcess(args)
         // TODO @important: Unlock
-        val processBuilder = ProcessBuilder(args)
-        processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-        processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
-        processBuilder.start()
-        exitProcess(0)
+//        val processBuilder = ProcessBuilder(args)
+//        processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+//        processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
+//        processBuilder.start()
+//        exitProcess(0)
     }
 
     override fun clean(): Boolean {

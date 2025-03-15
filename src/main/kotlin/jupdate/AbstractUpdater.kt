@@ -34,11 +34,12 @@ abstract class AbstractUpdater(config: UpdaterConfig) {
     }
 
     /**
-     * Starts the update process. Should only be called
-     * after checking that isUpdateAvailable() is true.
+     * Starts the update process by running download, unpack, then launching the patcher.
+     * Should only be called after isUpdateAvailable() returns true.
      */
     fun startUpdateProcess() {
-        download()
+        if (!download()) return
+        if (!unpack()) return
         runPatch()
     }
 

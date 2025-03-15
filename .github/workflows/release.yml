@@ -66,9 +66,10 @@ jobs:
             --main-jar ${{ env.APPNAME }}.jar `
             --main-class io.github.zmilla93.MainKt `
             --dest win-portable
+            --arguments "--distribution:win-portable" `
           Compress-Archive -Path win-portable/* -Destination ${{ env.APPNAME }}-win-portable.zip
 
-# FIXME : Build to dest?
+      # FIXME : Build to dest?
       - name: Build Windows Installer (MSI)
         run: |
           jpackage `
@@ -79,19 +80,20 @@ jobs:
             --main-class io.github.zmilla93.MainKt `
             --app-version ${{ env.VERSION }} `
             --dest win-msi `
+            --arguments "--distribution:win-msi" `
             --win-per-user-install `
             --win-console `
             --win-shortcut-prompt `
             --win-shortcut `
             --win-menu
           move win-msi/${{ env.APPNAME }}-${{ env.VERSION }}.msi ${{ env.APPNAME }}-win-installer.msi
+      
+      
 
-
-
-#      #      FIXME: Combine with previous step?
-#      - name: Zip the Windows Portable
-#        #        shell: powershell
-#        run: Compress-Archive -Path win-portable/* -Destination JUpdate-win-portable.zip
+      #      #      FIXME: Combine with previous step?
+      #      - name: Zip the Windows Portable
+      #        #        shell: powershell
+      #        run: Compress-Archive -Path win-portable/* -Destination JUpdate-win-portable.zip
 
       - name: Create release
         uses: ncipollo/release-action@v1

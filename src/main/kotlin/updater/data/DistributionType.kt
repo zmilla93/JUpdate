@@ -1,29 +1,46 @@
 package io.github.zmilla93.updater.data
 
-import java.nio.file.Paths
-import kotlin.io.path.exists
+import io.github.zmilla93.ArgsList
+import org.slf4j.LoggerFactory
 
+/**
+ * Represents currently supported distribution types.
+ * Distribution type is set via the program argument --distribution-type:TYPE
+ * TYPE is the enum name, to lower case, and "_" replaced with "-".
+ * IE WIN_MSI uses "--distribution-type:win-msi".
+ * This value must be passed to jpackage using "--arguments" when building for a specific platform.
+ */
 enum class DistributionType {
 
     NONE,
+    DEBUG,
     JAR,
-    WINDOWS_MSI,
-    WINDOWS_PORTABLE,
+    WIN_MSI,
+    WIN_PORTABLE,
     // TODO : Mac & Linux
     ;
 
     companion object {
 
-        var hasRunCheck = false
-        private var current: DistributionType = NONE
+        const val ARG_PREFIX = "--distribution-type:"
+        val logger = LoggerFactory.getLogger(DistributionType::class.simpleName)
 
-        fun current(launcherPath: String): DistributionType {
-            if (hasRunCheck) return current
-            val launcher = Paths.get(launcherPath)
-            val appFolder = launcher.parent
-            if (appFolder.resolve(".package").exists()) current = WINDOWS_MSI
-            else if (appFolder.resolve(".jpackage.xml").exists()) current = WINDOWS_PORTABLE
-            return current
+        fun getType(value: String?): DistributionType {
+            if (value == null) {
+                logger.error("No distribution type argument found. This program cannot be updated.")
+                return NONE
+            }
+            val type = entries.find { it.name.lowercase().replace("_", "-") == value.lowercase() }
+            if (type == null) {
+                logger.error("Unknown distribution type '$value'. This program cannot be updated.")
+                return NONE
+            }
+            return type
+        }
+
+        fun getTypeFromArgs(args: Array<String>): DistributionType {
+            val arg = ArgsList.getCleanArg(args, ARG_PREFIX)
+            return getType(arg)
         }
 
     }

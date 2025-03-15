@@ -1,0 +1,7 @@
+
+Current
+=======
+- Add distribution type as a program arg
+- Setup pass through args for distribution
+- Use distribution type when updating
+- Write ps script that runs the installer, then runs the original launcher

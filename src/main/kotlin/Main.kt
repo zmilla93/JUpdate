@@ -18,9 +18,9 @@ fun main(args: Array<String>) {
     println("App Launched: ${args.joinToString(prefix = "[", postfix = "]", separator = ",")}")
     val properties = ProjectProperties()
     val version = AppVersion(properties.version)
-    val distributionType = DistributionType.current(UpdateUtil.getCurrentProgramPath())
+//    val distributionType = DistributionType.getTypeFromArgs(UpdateUtil.getCurrentProgramPath())
     println("Version: " + properties.version)
-    println("Distribution:" + distributionType)
+//    println("Distribution:" + distributionType)
 
     handleUpdateProcess(args, version)
     SwingUtilities.invokeLater {
@@ -40,18 +40,19 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     val jarUpdaterConfig = GitHubUpdaterConfig(arrayOf(jarName), jarName, tempDir)
     System.err.println("updater disabled")
     val updater = JarUpdater("zmilla93", "JUpdate", currentVersion, jarUpdaterConfig)
-    createUpdater()
+//    createUpdater()
     updater.handleCurrentlyRunningUpdate(args)
+    println("Distribution Type: " + DistributionType.getTypeFromArgs(args))
     if (updater.wasJustUpdated()) {
         println("Was just updated!")
         return
     }
-    if (updater.isUpdateAvailable()) updater.startUpdateProcess()
+//    if (updater.isUpdateAvailable()) updater.startUpdateProcess()
 }
 
 fun createUpdater() {
 //    var updater:AbstractGitHubUpdater;
-    val distributionType = DistributionType.current(UpdateUtil.getCurrentProgramPath())
-    println("Distribution:" + distributionType)
+//    val distributionType = DistributionType.current(UpdateUtil.getCurrentProgramPath())
+//    println("Distribution:" + distributionType)
 
 }

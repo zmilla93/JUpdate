@@ -65,8 +65,8 @@ jobs:
             --input target/jar `
             --main-jar ${{ env.APPNAME }}.jar `
             --main-class io.github.zmilla93.MainKt `
-            --dest win-portable
-            --arguments '--distribution-type:win-portable' `
+            --dest win-portable `
+            --arguments '--distribution-type:win-portable'
           Compress-Archive -Path win-portable/* -Destination ${{ env.APPNAME }}-win-portable.zip
 
       # FIXME : Build to dest?

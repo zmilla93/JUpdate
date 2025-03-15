@@ -1,31 +1,40 @@
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+$mavenOutput = $false
 
-Write-Host $path
-Write-Host "Reading pom.xml..." -NoNewline
-$time = Measure-Command {
+$sep = "--------------------------------------------------"
+Write-Host $sep
+Write-Host "Running Windows Build Process"
+Write-Host $sep
+
+Write-Host "Reading pom.xml..." -NoNewLine
+$pomTime = Measure-Command {
 [xml]$pom = Get-Content pom.xml
 $APP_NAME = $pom.project.artifactId
 $APP_VERSION = $pom.project.version
 $MAIN_CLASS = $pom.project.properties."main-class"
+$test = $pom.nope
 $JAVA_VERSION = $pom.project.properties."java-version"
-Write-Host "Java: $JAVA_VERSION"
-Write-Host "App: $APP_NAME v$APP_VERSION"
-Write-Host "Main: $MAIN_CLASS"
 }
-Write-Host "$("{0:N3}" -f $time.TotalSeconds)s"
+Write-Host "$("{0:N3}" -f $pomTime.TotalSeconds)s"
+Write-Host "`tJava : $JAVA_VERSION"
+Write-Host "`tApp  : $APP_NAME v$APP_VERSION"
+Write-Host "`tMain : $MAIN_CLASS"
 
-Write-Host "Building JAR... "
-mvn clean compile assembly:single
+if($mavenOutput){
+    $jarTime = Measure-Command { mvn clean compile assembly:single | Out-Default }
+}else{
+    Write-Host "Building JAR... " -NoNewLine
+    $jarTime = Measure-Command { mvn clean compile assembly:single }
+    Write-Host "$("{0:N3}" -f $jarTime.TotalSeconds)s"
+}
 
 Write-Host "Running JDEPS... " -NoNewline
-$time = Measure-Command {
-$JDEPS = jdeps --print-module-deps --ignore-missing-deps target/jar/$APP_NAME.jar
-}
-Write-Host "$("{0:N3}" -f $time.TotalSeconds)s"
+$jdepsTime = Measure-Command { $JDEPS = jdeps --print-module-deps --ignore-missing-deps target/jar/$APP_NAME.jar }
+Write-Host "$("{0:N3}" -f $jdepsTime.TotalSeconds)s"
 Write-Host "Dependencies: $JDEPS"
 
-Write-Host "Building JRE..."
-$time = Measure-Command {
+Write-Host "Building JRE..." -NoNewLine
+$jlinkTime = Measure-Command {
 jlink `
     --output target/jre `
     --strip-native-commands `
@@ -34,10 +43,10 @@ jlink `
     --no-header-files `
     --add-modules $JDEPS
 }
-Write-Host "$("{0:N3}" -f $time.TotalSeconds)s"
+Write-Host "$("{0:N3}" -f $jlinkTime.TotalSeconds)s"
 
 Write-Host "Building Windows Portable... " -NoNewline
-$time = Measure-Command {
+$portableTime = Measure-Command {
 jpackage --type app-image `
     --name JUpdater `
     --main-jar JUpdate.jar `
@@ -48,10 +57,10 @@ jpackage --type app-image `
     --arguments '--distribution-type:win-portable' `
     --win-console
 }
-Write-Host "$("{0:N3}" -f $time.TotalSeconds)s"
+Write-Host "$("{0:N3}" -f $portableTime.TotalSeconds)s"
 
-Write-Host "Building Windows Installer... "
-$time = Measure-Command {
+Write-Host "Building Windows Installer... " -NoNewLine
+$msiTime = Measure-Command {
 jpackage --type msi `
     --name "$APP_NAME" `
     --main-jar "$APP_NAME.jar" `
@@ -67,9 +76,16 @@ jpackage --type msi `
     --win-shortcut `
     --win-menu
 }
-Write-Host "$("{0:N3}" -f $time.TotalSeconds)s"
+Write-Host "$("{0:N3}" -f $msiTime.TotalSeconds)s"
 
-Write-Host "======================"
+Write-Host $sep
 Write-Host "Build Process Complete"
-Write-Host "Total Time: $($stopwatch.Elapsed.TotalSeconds)s"
-Write-Host "======================"
+Write-Host $sep
+Write-Host ".jar     : $("{0:N3}" -f $jarTime.TotalSeconds)s"
+Write-Host "jdeps    : $("{0:N3}" -f $jdepsTime.TotalSeconds)s"
+Write-Host "jlink    : $("{0:N3}" -f $jlinkTime.TotalSeconds)s"
+Write-Host "portable : $("{0:N3}" -f $portableTime.TotalSeconds)s"
+Write-Host "msi      : $("{0:N3}" -f $msiTime.TotalSeconds)s"
+Write-Host $sep
+Write-Host "Total    : $("{0:N3}" -f $stopwatch.Elapsed.TotalSeconds)s"
+Write-Host $sep

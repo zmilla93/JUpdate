@@ -84,7 +84,7 @@ class GithubAPI(
     }
 
     private fun fetchDataFromEndpoint(endpoint: String): String? {
-        logger.info("Fetching data from $endpoint...")
+        logger.info("Fetching release data from $endpoint...")
         try {
             val httpConnection = (URL(endpoint).openConnection()) as HttpURLConnection
             val inputStream: BufferedReader
@@ -101,7 +101,7 @@ class GithubAPI(
             val builder = StringBuilder()
             while (inputStream.ready()) builder.append(inputStream.readLine())
             inputStream.close()
-            logger.info("Got data! $builder")
+            logger.info("Release data fetched successfully!")
             return builder.toString()
         } catch (e: MalformedURLException) {
             logger.error("Malformed releases URL: $ALL_RELEASES_ENDPOINT")

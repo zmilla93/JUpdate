@@ -23,11 +23,6 @@ abstract class AbstractGitHubUpdater(
         return currentVersion != latestVersion
     }
 
-    fun startUpdateProcess() {
-        download()
-        runPatch()
-    }
-
     override fun download(): Boolean {
         if (github.latestRelease() == null) return false
         if (config.assetNames.isEmpty()) throw RuntimeException("No download targets specified.")

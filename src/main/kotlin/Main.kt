@@ -1,8 +1,8 @@
 package io.github.zmilla93
 
 import io.github.zmilla93.gui.MainFrame
-import io.github.zmilla93.jupdate.JarUpdater
 import io.github.zmilla93.jupdate.GitHubUpdaterConfig
+import io.github.zmilla93.jupdate.JarUpdater
 import io.github.zmilla93.jupdate.UpdateUtil
 import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.ProjectProperties
@@ -19,6 +19,7 @@ fun main(args: Array<String>) {
     val properties = ProjectProperties()
     val version = AppVersion(properties.version)
     val distributionType = DistributionType.current(UpdateUtil.getCurrentProgramPath())
+    println("Version: " + properties.version)
     println("Distribution:" + distributionType)
 
     handleUpdateProcess(args, version)
@@ -41,14 +42,14 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     val updater = JarUpdater("zmilla93", "JUpdate", currentVersion, jarUpdaterConfig)
     createUpdater()
     updater.handleCurrentlyRunningUpdate(args)
-    if (updater.wasJustUpdated()){
+    if (updater.wasJustUpdated()) {
         println("Was just updated!")
         return
     }
     if (updater.isUpdateAvailable()) updater.startUpdateProcess()
 }
 
-fun createUpdater(){
+fun createUpdater() {
 //    var updater:AbstractGitHubUpdater;
     val distributionType = DistributionType.current(UpdateUtil.getCurrentProgramPath())
     println("Distribution:" + distributionType)

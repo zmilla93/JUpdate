@@ -27,6 +27,15 @@ abstract class AbstractUpdater {
     }
 
     /**
+     * Starts the update process. Should only be called
+     * after checking that isUpdateAvailable() is true.
+     */
+    fun startUpdateProcess() {
+        download()
+        runPatch()
+    }
+
+    /**
      * This must be called before anything else using the program launch args.
      * The update process will continue (if running) based on the program args.
      */

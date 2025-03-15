@@ -72,7 +72,7 @@ jobs:
             --win-shortcut-prompt `
             --win-shortcut `
             --win-menu
-          copy win-msi/JUpdate-${{ env.VERSION }}.msi JUpdate-win-installer.msi
+          copy win-msi/JUpdate-0.0.1.msi JUpdate-win-installer.msi
 
       - name: Build Windows Portable
         run: |

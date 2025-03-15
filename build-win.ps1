@@ -5,9 +5,8 @@ $APP_NAME = $pom.project.artifactId
 $APP_VERSION = $pom.project.version
 $MAIN_CLASS = $pom.project.properties."main-class"
 $JAVA_VERSION = $pom.project.properties."java-version"
-Write-Host "App: $APP_NAME"
-Write-Host "Version: $APP_VERSION"
 Write-Host "Java: $JAVA_VERSION"
+Write-Host "App: $APP_NAME v$APP_VERSION"
 Write-Host "Main: $MAIN_CLASS"
 
 Write-Host "Building JAR..."

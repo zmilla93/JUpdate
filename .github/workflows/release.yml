@@ -44,12 +44,9 @@ jobs:
           restore-keys: |
             maven-${{ runner.os }}-
 
-#          echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-      #FIXME : Is this copy required?
-      - name: Build Jar with Maven
+      - name: Build Jar
         run: |
           mvn clean compile assembly:single
-      #          copy target/jar/JUpdater.jar JUpdater.jar
 
 
       #      - name: Extract app version from pom.xml (ubuntu)
@@ -60,7 +57,7 @@ jobs:
       #      - name: Install jpackage (for Linux)
       #        run: sudo apt-get install -y fakeroot
 
-      - name: Build Windows Portable with jpackage
+      - name: Build Windows Portable
         run: |
           jpackage `
             --name ${{ env.APPNAME }} `
@@ -72,7 +69,7 @@ jobs:
           Compress-Archive -Path win-portable/* -Destination ${{ env.APPNAME }}-win-portable.zip
 
 # FIXME : Build to dest?
-      - name: Build Windows Installer (MSI) with
+      - name: Build Windows Installer (MSI)
         run: |
           jpackage `
             --name ${{ env.APPNAME }} `

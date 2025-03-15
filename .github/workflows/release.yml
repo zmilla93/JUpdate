@@ -94,9 +94,9 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          name: JUpdate ${{ env.VERSION }}
+          name: ${{ env.APPNAME }} ${{ env.VERSION }}
           tag: ${{ env.VERSION }}
-          artifacts: target/jar/JUpdate.jar, JUpdate-win-portable.zip, JUpdate-win-installer.msi
+          artifacts: target/jar/${{ env.APPNAME }}.jar, ${{ env.APPNAME }}-win-portable.zip, ${{ env.APPNAME }}-win-installer.msi
           token: ${{ secrets.GITHUB_TOKEN }}
 
 #  release:

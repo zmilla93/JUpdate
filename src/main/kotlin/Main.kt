@@ -15,7 +15,7 @@ import javax.swing.SwingUtilities
 
 fun main(args: Array<String>) {
 
-    println("App Launched: ${args.joinToString(separator = ",")}")
+    println("App Launched: ${args.joinToString(prefix = "[", postfix = "]", separator = ",")}")
     val properties = ProjectProperties()
     val version = AppVersion(properties.version)
     val distributionType = DistributionType.current(UpdateUtil.getCurrentProgramPath())
@@ -33,7 +33,8 @@ fun main(args: Array<String>) {
 }
 
 fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
-    val jarName = "JUpdater.jar"
+    // FIXME @important : Use app name from pom
+    val jarName = "JUpdate.jar"
     val tempDir = Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp")
     val jarUpdaterConfig = GitHubUpdaterConfig(arrayOf(jarName), jarName, tempDir)
     System.err.println("updater disabled")

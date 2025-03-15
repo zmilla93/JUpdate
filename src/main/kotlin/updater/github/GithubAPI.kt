@@ -36,7 +36,7 @@ class GithubAPI(
     private var latestRelease: GitHubRelease? = null
 
     // Internal
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val logger = LoggerFactory.getLogger(javaClass.simpleName)
     private val gson = Gson()
     private val progressListeners = ArrayList<IUpdateProgressListener>()
 
@@ -87,7 +87,6 @@ class GithubAPI(
         logger.info("Fetching data from $endpoint...")
         try {
             val httpConnection = (URL(endpoint).openConnection()) as HttpURLConnection
-            httpConnection.connectTimeout = 5000
             val inputStream: BufferedReader
             try {
                 inputStream = BufferedReader(InputStreamReader(httpConnection.inputStream, StandardCharsets.UTF_8))
@@ -102,6 +101,7 @@ class GithubAPI(
             val builder = StringBuilder()
             while (inputStream.ready()) builder.append(inputStream.readLine())
             inputStream.close()
+            logger.info("Got data! $builder")
             return builder.toString()
         } catch (e: MalformedURLException) {
             logger.error("Malformed releases URL: $ALL_RELEASES_ENDPOINT")
@@ -110,7 +110,6 @@ class GithubAPI(
             logger.error("IOException fetching releases: $ALL_RELEASES_ENDPOINT")
             e.printStackTrace()
         }
-        logger.info("End Fetch")
         return null;
     }
 

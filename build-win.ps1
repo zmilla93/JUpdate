@@ -1,4 +1,3 @@
-
 Write-Host $path
 Write-Host "Reading pom.xml..."
 [xml]$pom = Get-Content pom.xml

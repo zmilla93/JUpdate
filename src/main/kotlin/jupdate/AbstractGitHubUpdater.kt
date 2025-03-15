@@ -32,8 +32,12 @@ abstract class AbstractGitHubUpdater(
         if (github.latestRelease() == null) return false
         if (config.assetNames.isEmpty()) throw RuntimeException("No download targets specified.")
         for (assetName in config.assetNames) {
+            logger.info("Attempting to download '$assetName'...")
             val asset = github.latestRelease()!!.findAssetByName(assetName)
-            if (asset == null) return false
+            if (asset == null) {
+                logger.error("Asset '$assetName' not found!")
+                return false
+            }
             val success = github.downloadFile(
                 asset.browser_download_url,
                 config.tempDirectory.resolve(assetName)

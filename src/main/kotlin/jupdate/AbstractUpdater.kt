@@ -19,7 +19,7 @@ abstract class AbstractUpdater {
     var isLauncher = false;
     var currentUpdateStep = UpdateStep.NONE
     private var wasJustUpdated = false
-    protected val logger = LoggerFactory.getLogger(javaClass)
+    protected val logger = LoggerFactory.getLogger(javaClass.simpleName)
     var launchArgs = emptyArray<String>()
 
     companion object {

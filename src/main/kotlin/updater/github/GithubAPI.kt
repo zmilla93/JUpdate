@@ -86,17 +86,15 @@ class GithubAPI(
     private fun fetchDataFromEndpoint(endpoint: String): String? {
         logger.info("Fetching data from $endpoint...")
         try {
-            val httpConnection = (URL(endpoint + "ASdf").openConnection()) as HttpURLConnection
+            val httpConnection = (URL(endpoint).openConnection()) as HttpURLConnection
             httpConnection.connectTimeout = 5000
             val inputStream: BufferedReader
             try {
                 inputStream = BufferedReader(InputStreamReader(httpConnection.inputStream, StandardCharsets.UTF_8))
-            }
-            catch (e:FileNotFoundException){
+            } catch (e: FileNotFoundException) {
                 logger.error("File not found. Either the URL is wrong or this repo has no releases.")
                 return null
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 logger.error("Failed to connect to GitHub. This is either a connection issue or the API rate limit has been exceeded.")
                 e.printStackTrace()
                 return null
@@ -108,8 +106,7 @@ class GithubAPI(
         } catch (e: MalformedURLException) {
             logger.error("Malformed releases URL: $ALL_RELEASES_ENDPOINT")
             e.printStackTrace()
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             logger.error("IOException fetching releases: $ALL_RELEASES_ENDPOINT")
             e.printStackTrace()
         }

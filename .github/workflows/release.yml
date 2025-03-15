@@ -38,8 +38,8 @@ jobs:
           $appName = $pom.project.artifactId
           $version = $pom.project.version
           echo "$appName v$version"
-          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-          echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+          echo "APPNAME=$appName VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+#          echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
       #FIXME : This this copy required?
       - name: Build with Maven
         run: |

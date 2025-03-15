@@ -71,20 +71,20 @@ class GithubAPI(
 
     private fun fetchLatestRelease(forceCheck: Boolean = false) {
         if (hasCachedLatestRelease && !forceCheck) return
+        hasCachedLatestRelease = true
         val data = fetchDataFromEndpoint(LATEST_RELEASE_ENDPOINT)
         if (data == null) return
         latestRelease = gson.fromJson(data, GitHubRelease::class.java);
-        hasCachedLatestRelease = true
     }
 
     private fun fetchAllReleases(forceCheck: Boolean = false) {
         if (hasCachedAllReleases && !forceCheck) return
+        hasCachedAllReleases = true
         val data = fetchDataFromEndpoint(ALL_RELEASES_ENDPOINT)
         if (data == null) return
         releases = gson.fromJson(data, Array<GitHubRelease>::class.java)
         if (releases == null) return
         if (allowPreRelease && releases!!.isNotEmpty()) latestRelease = releases!![0]
-        hasCachedAllReleases = true
     }
 
     private fun fetchDataFromEndpoint(endpoint: String): String? {

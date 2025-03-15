@@ -4,6 +4,7 @@ import io.github.zmilla93.gui.MainFrame
 import io.github.zmilla93.jupdate.*
 import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.ProjectProperties
+import org.slf4j.LoggerFactory
 import updater.data.AppVersion
 import java.nio.file.Paths
 import javax.swing.SwingUtilities
@@ -11,35 +12,26 @@ import javax.swing.SwingUtilities
 //val updateManager: UpdateManager
 
 val enableUpdater = false
+val logger = LoggerFactory.getLogger(Main::class.java.simpleName)
 
+class Main {
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
 
-fun main(args: Array<String>) {
-
-    println("App Launched: ${args.joinToString(prefix = "[", postfix = "]", separator = ",")}")
-    val properties = ProjectProperties()
-    val version = AppVersion(properties.version)
+            println("App Launched: ${args.joinToString(prefix = "[", postfix = "]", separator = ",")}")
+            val properties = ProjectProperties()
+            val version = AppVersion(properties.version)
 //    val distributionType = DistributionType.getTypeFromArgs(UpdateUtil.getCurrentProgramPath())
-    println("Version: " + properties.version)
+            println("Version: " + properties.version)
 //    println("Distribution:" + distributionType)
-    handleUpdateProcess(args, version)
-    SwingUtilities.invokeLater {
-        val mainFrame = MainFrame(args, version)
-        mainFrame.isVisible = true
+            handleUpdateProcess(args, version)
+            SwingUtilities.invokeLater {
+                val mainFrame = MainFrame(args, version)
+                mainFrame.isVisible = true
+            }
+        }
     }
-//    val path = File(".").canonicalPath
-//    println("LaunchTest1: $path")
-//    println("LaunchTest2: ${System.getProperty("user.dir")}")
-//    val msiPatcher = object {}.javaClass.getResourceAsStream("/msi-patcher.ps1")
-//    if (msiPatcher != null) {
-//        val text = msiPatcher.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
-//        println(text)
-//        UpdateUtil.copyResourceToDisk(
-//            "msi-patcher.ps1",
-//            Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp\\test")
-//        )
-//    } else {
-//        System.err.println("Missing MSI Patcher!!!")
-//    }
 }
 
 fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
@@ -52,7 +44,9 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     if (updater == null) System.err.println("Updater is null!")
     else {
         updater.handleCurrentlyRunningUpdate(args)
-        println("Distribution Type: " + DistributionType.getTypeFromArgs(args))
+        logger.info("Latest Version: " + updater.latestVersion())
+        if (updater.isUpdateAvailable()) updater.startUpdateProcess()
+        logger.info("Distribution Type: " + DistributionType.getTypeFromArgs(args))
         if (updater.wasJustUpdated()) {
             println("Was just updated!")
             return

@@ -4,16 +4,14 @@ import io.github.zmilla93.ArgsList
 import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.UpdateStep
 import org.slf4j.LoggerFactory
+import updater.data.AppVersion
 
 /**
  * Abstracts the update process into 4 steps: download, unpack, patch, clean.
  * Patching happens from a temporary process, and clean is run on the newly installed
  * process, which is handled with runPatch and runClean.
  */
-abstract class AbstractUpdater(argsArr: Array<String>, config: UpdaterConfig) {
-
-    /** Returns true when a new update is available. */
-    abstract fun isUpdateAvailable(): Boolean
+abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig) {
 
     /** Path to the originally running program */
     val args = ArgsList(argsArr)
@@ -38,6 +36,8 @@ abstract class AbstractUpdater(argsArr: Array<String>, config: UpdaterConfig) {
      * Should only be called after isUpdateAvailable() returns true.
      */
     fun startUpdateProcess() {
+        // TODO : App name in output?
+        logger.info("Updating from version " + config.currentVersion + " to " + latestVersion() + "...")
         if (!download()) return
         if (!unpack()) return
         runPatch()
@@ -70,6 +70,12 @@ abstract class AbstractUpdater(argsArr: Array<String>, config: UpdaterConfig) {
     fun wasJustUpdated(): Boolean {
         return wasJustUpdated
     }
+
+    /** Returns true when a new update is available. */
+    abstract fun isUpdateAvailable(): Boolean
+
+    /** Returns the latest version from some remote API. */
+    abstract fun latestVersion(): AppVersion?
 
     /**
      * Step 1/4: Downloads the new file(s) to be installed.

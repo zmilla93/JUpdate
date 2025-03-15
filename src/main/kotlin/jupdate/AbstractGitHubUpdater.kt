@@ -8,7 +8,7 @@ import java.nio.file.attribute.BasicFileAttributes
 
 abstract class AbstractGitHubUpdater(
     args: Array<String>,
-    val config: UpdaterConfig,
+    config: UpdaterConfig,
     githubConfig: GitHubConfig
 ) : AbstractUpdater(args, config) {
 
@@ -18,6 +18,11 @@ abstract class AbstractGitHubUpdater(
         val latestRelease = githubAPI.latestRelease() ?: return false
         val latestVersion = AppVersion(latestRelease.tag_name)
         return config.currentVersion != latestVersion
+    }
+
+    override fun latestVersion(): AppVersion? {
+        githubAPI.latestRelease() ?: return null
+        return AppVersion(githubAPI.latestRelease()!!.tag_name)
     }
 
     override fun download(): Boolean {

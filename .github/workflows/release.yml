@@ -39,7 +39,10 @@ jobs:
           $version = $pom.project.version
           echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-
+          echo $version
+          echo $appName
+          echo ${{ env.VERSION }}
+          echo ${{ env.APPNAME }}
       #FIXME : This this copy required?
       - name: Build with Maven
         run: |

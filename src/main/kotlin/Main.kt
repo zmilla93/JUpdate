@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     val distributionType = DistributionType.current(UpdateUtil.getCurrentProgramPath())
     println("Distribution:" + distributionType)
 
-//    handleUpdateProcess(args, version)
+    handleUpdateProcess(args, version)
     SwingUtilities.invokeLater {
         val mainFrame = MainFrame(args, version)
         mainFrame.isVisible = true

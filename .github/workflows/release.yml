@@ -39,7 +39,6 @@ jobs:
 
       - name: Get App Version
         id: get_version
-        shell: powershell
         run: |
           [xml]$pom = Get-Content pom.xml
           $version = $pom.project.version

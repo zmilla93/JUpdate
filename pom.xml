@@ -9,6 +9,7 @@
     <version>0.0.1</version>
 
     <properties>
+        <main-class>io.github.zmilla93.MainKt</main-class>
         <jvm-version>21</jvm-version>
         <kotlin.compiler.jvmTarget>${jvm-version}</kotlin.compiler.jvmTarget>
         <maven.compiler.source>${jvm-version}</maven.compiler.source>
@@ -87,11 +88,11 @@
                 <version>3.6.0</version>
                 <configuration>
                     <outputDirectory>target/jar</outputDirectory>
-                    <finalName>JUpdater</finalName>
+                    <finalName>${artifactId}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
-                            <mainClass>io.github.zmilla93.MainKt</mainClass>
+                            <mainClass>${main-class}</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

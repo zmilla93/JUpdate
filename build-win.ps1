@@ -32,6 +32,7 @@ else
 }
 if ($LASTEXITCODE -ne 0)
 {
+    mvn clean
     throw("Failed to build JAR!")
 }
 

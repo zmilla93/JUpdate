@@ -5,6 +5,7 @@ import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.UpdateStep
 import org.slf4j.LoggerFactory
 import updater.data.AppVersion
+import java.nio.file.Path
 
 /**
  * Abstracts the update process into 4 steps: download, unpack, patch, clean.
@@ -15,7 +16,9 @@ abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig
 
     /** Path to the originally running program */
     val args = ArgsList(argsArr)
-    var launcherPath: String? = null
+    var launcherPath: Path? = null
+
+    @Deprecated("Use launcherPath and args")
     var launcherPathArg: String? = null
     var currentUpdateStep = UpdateStep.NONE
     private var wasJustUpdated = false
@@ -77,6 +80,9 @@ abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig
     /** Returns the latest version from some remote API. */
     abstract fun latestVersion(): AppVersion?
 
+    //FIXME @important : Remove once namespace issue is fixed
+    protected abstract fun getPathToCurrentLauncher(): Path?
+
     /**
      * Step 1/4: Downloads the new file(s) to be installed.
      */
@@ -125,12 +131,12 @@ abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig
 //        if (distribution == null) {
 //            logger.error("No distribution type was set! This app cannot be updated automatically.")
 //        }
-        if (args.containsArgPrefix(LAUNCHER_PREFIX)) launcherPath = args.getCleanArg(LAUNCHER_PREFIX)
+        if (args.containsArgPrefix(LAUNCHER_PREFIX)) launcherPath = args.getCleanArgPath(LAUNCHER_PREFIX)
         else {
-            launcherPath = UpdateUtil.getCurrentProgramPath()
+            launcherPath = getPathToCurrentLauncher()
             args.addArg(LAUNCHER_PREFIX + launcherPath)
         }
-        logger.info("Launcher: $launcherPath")
+        logger.info("Launcher: $launcherPath()")
 //        if (existingLauncherArg != null) {
 //            // Existing launch path
 //            launcherPathArg = existingLauncherArg

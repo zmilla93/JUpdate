@@ -53,12 +53,13 @@ abstract class AbstractGitHubUpdater(
     override fun runClean() {
         val args = ArrayList<String>()
         // TODO @important: Add launcher
-        println("Running clean....")
-        println("launcher: $launcherPath")
-        args.add("java")
-        args.add("-jar")
-        args.add(launcherPath!!)
-        args.add(launcherPathArg!!)
+//        println("Running clean....")
+//        println("launcher: $launcherPath")
+//        args.add("java")
+//        args.add("-jar")
+        // FIXME @important : Pass through program args
+        args.add(launcherPath.toString())
+//        args.add(launcherPathArg!!)
         args.add("clean")
         UpdateUtil.runNewProcess(args)
         // TODO @important: Unlock

@@ -2,12 +2,17 @@ package io.github.zmilla93.jupdate
 
 import java.io.IOException
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import kotlin.system.exitProcess
 
 class JarUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHubConfig) :
     AbstractGitHubUpdater(args, config, githubConfig) {
+
+    override fun getPathToCurrentLauncher(): Path? {
+        return Paths.get(UpdateUtil.getCurrentProgramPath())
+    }
 
     override fun unpack(): Boolean {
         // Do nothing
@@ -37,7 +42,7 @@ class JarUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHu
             println("Copying files...")
             Files.copy(
                 config.tempDirectory.resolve(config.patcherFileName),
-                Paths.get(launcherPath!!),
+                launcherPath!!,
                 StandardCopyOption.REPLACE_EXISTING
             )
             println("Files copied successfully!")

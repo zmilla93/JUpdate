@@ -1,5 +1,8 @@
 package io.github.zmilla93
 
+import java.nio.file.Path
+import java.nio.file.Paths
+
 class ArgsList(args: Array<String>) {
 
     val list = args.toMutableList()
@@ -13,9 +16,13 @@ class ArgsList(args: Array<String>) {
     }
 
     fun getCleanArg(prefix: String): String? {
-        val result = list.find { it.startsWith(prefix) }
-        if (result == null) return null
+        val result = list.find { it.startsWith(prefix) } ?: return null
         return result.replaceFirst(prefix, "")
+    }
+
+    fun getCleanArgPath(prefix: String): Path? {
+        val result = getCleanArg(prefix) ?: return null
+        return Paths.get(result)
     }
 
     fun addArg(arg: String) {

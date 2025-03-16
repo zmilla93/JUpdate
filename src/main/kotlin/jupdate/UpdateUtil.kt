@@ -1,5 +1,6 @@
 package io.github.zmilla93.jupdate
 
+import io.github.zmilla93.updater.data.DistributionType
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URISyntaxException
@@ -7,6 +8,7 @@ import java.net.http.HttpClient
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.security.SecureRandom
 import java.util.regex.Matcher
 import javax.net.ssl.SSLContext
@@ -21,10 +23,19 @@ class UpdateUtil {
         val logger = LoggerFactory.getLogger(UpdateUtil::class.java.simpleName)
 
         /**
+         * Returns the directory containing the currently running .jar file.
+         * Use this to resolve the path of the platform specific launcher.
+         */
+        fun getCurrentProgramDirectory(): Path {
+            return Paths.get(System.getProperty("user.dir"))
+        }
+
+        /**
          *  Returns the full path of the currently running program.
          *  Used at the start of the updating process to save the original launch path.
          */
         // FIXME : This function is old, see if there is a better way to do things
+        @Deprecated("Remove ")
         fun getCurrentProgramPath(): String {
             if (!hasCachedProgramPath) {
                 try {

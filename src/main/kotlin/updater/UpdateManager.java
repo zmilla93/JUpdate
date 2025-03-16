@@ -109,7 +109,7 @@ public class UpdateManager {
         } catch (InterruptedException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-        String[] args = new String[]{UpdateAction.DOWNLOAD.toString(), LAUNCH_PATH_PREFIX + getLaunchPath()};
+        String[] args = new String[]{UpdateAction.DOWNLOAD.toString(), LAUNCH_PATH_PREFIX + getLauncherPath()};
         continueUpdateProcess(args);
     }
 
@@ -140,7 +140,7 @@ public class UpdateManager {
             if (arg.equals(UpdateAction.CLEAN.toString())) currentAction = UpdateAction.CLEAN;
         }
         if (launchPath == null) {
-            launchPath = getLaunchPath();
+            launchPath = getLauncherPath();
             launchArgs.add(LAUNCH_PATH_PREFIX + launchPath);
         }
         // Run the target action based on args
@@ -297,7 +297,19 @@ public class UpdateManager {
         return null;
     }
 
-    private String getLaunchPath() {
+    private String getLauncherPath() {
+        try {
+            String path = UpdateManager.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            if (path.startsWith("/")) path = path.replaceFirst("/", "");
+            return UpdateUtil.cleanFileSeparators(path);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    
+    private String getCurrentlyRunningProgram() {
         try {
             String path = UpdateManager.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
             if (path.startsWith("/")) path = path.replaceFirst("/", "");

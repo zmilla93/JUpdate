@@ -5,6 +5,7 @@ package updater
  * All callbacks are called on the EventDispatchThread.
  */
 interface DownloadProgressListener {
+
     /** Called when a new download starts */
     fun onDownloadStart(fileName: String?)
 
@@ -16,4 +17,5 @@ interface DownloadProgressListener {
 
     /** Called if the download fails at any point. */
     fun onDownloadFailed()
+
 }

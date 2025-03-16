@@ -1,6 +1,7 @@
 package io.github.zmilla93
 
 import io.github.zmilla93.gui.MainFrame
+import io.github.zmilla93.gui.ProgressFrame
 import io.github.zmilla93.updater.core.*
 import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.ProjectProperties
@@ -15,6 +16,7 @@ import javax.swing.SwingUtilities
 
 val enableUpdater = false
 val logger = LoggerFactory.getLogger(Main::class.java.simpleName)
+var progressFrame: ProgressFrame? = null
 
 class Main {
     companion object {
@@ -76,6 +78,8 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     logger.info("Latest Version: " + updater.latestVersion())
     logger.info("Distribution Type: " + DistributionType.getTypeFromArgs(args))
     if (updater.isUpdateAvailable()) {
+        SwingUtilities.invokeAndWait { progressFrame = ProgressFrame() }
+        updater.addDownloadProgressListener(progressFrame!!)
         updater.startUpdateProcess()
     } else {
         logger.info("No update available.")

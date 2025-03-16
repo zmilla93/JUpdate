@@ -1,6 +1,6 @@
 Current
 =======
-- Listener system
+~ Listener system
 + Progress tracking
 - Delayed alerts
 + Handle pass through args in updater

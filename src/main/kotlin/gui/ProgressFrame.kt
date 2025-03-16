@@ -2,6 +2,7 @@ package io.github.zmilla93.gui
 
 import updater.DownloadProgressListener
 import java.awt.BorderLayout
+import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.JProgressBar
@@ -12,9 +13,12 @@ class ProgressFrame : JFrame("Updater"), DownloadProgressListener {
 
     init {
         layout = BorderLayout()
-        add(JLabel("Updating to new version..."), BorderLayout.NORTH)
+        add(JLabel("Downloading latest version..."), BorderLayout.NORTH)
         add(progressBar, BorderLayout.SOUTH)
+        minimumSize = Dimension(400, 10)
         pack()
+        isVisible = true
+        isAlwaysOnTop = true
     }
 
     override fun onDownloadStart(fileName: String?) {

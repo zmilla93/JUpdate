@@ -1,20 +1,19 @@
 Current
 =======
 - Make sure the native launcher path file exists before starting the download process!
-+ Have periodic check clear cache
-+ Delayed alerts
-- Silent Param (for update on close)
 ~ Listener system
-+ Progress tracking
-- Patch progress (win-portable)
-+ Handle pass through args in updater
 - Handle pass through args in ps
 - Make MSI launch after initial install
-- Make sure Jar updater didn't break? (it won't have distribution program arg without bat).
 - Build for other platforms
+- Make sure Jar updater didn't break? (it won't have distribution program arg without bat).
 - TODOs & FIXMEs
 - Cleanup
 - Comments
+- Patch progress (win-portable)
++ Progress tracking
++ Handle pass through args in updater
++ Have periodic check clear cache
++ Delayed alerts
 + Use distribution type when updating
 + Handle pass through args in updater
 + Use distribution type when updating
@@ -22,10 +21,15 @@ Current
 + Write ps script that runs the installer, then runs the original launcher
 + Write ps script that runs the installer, then runs the original launcher
 
+Win-Portable
+============
+- Update
+- Track progress during patch
+
 Finalize
 ========
 Make sure alerts happen from EDT
 
 Low Priority
 ============
-- Portable Updater
+- Silent Param (for update on close)

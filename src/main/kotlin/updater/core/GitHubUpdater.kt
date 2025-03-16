@@ -2,6 +2,8 @@ package io.github.zmilla93.updater.core
 
 import io.github.zmilla93.updater.github.GithubAPI
 import updater.data.AppVersion
+import java.nio.file.Path
+import kotlin.system.exitProcess
 
 abstract class GitHubUpdater(
     args: Array<String>,
@@ -51,23 +53,20 @@ abstract class GitHubUpdater(
 //    }
 
     override fun runClean() {
-        val args = ArrayList<String>()
-        // TODO @important: Add launcher
-//        println("Running clean....")
-//        println("launcher: $launcherPath")
-//        args.add("java")
-//        args.add("-jar")
+        val argsArr = ArrayList<String>()
         // FIXME @important : Pass through program args
-        args.add(getNativeLauncherPath().toString())
-//        args.add(launcherPathArg!!)
-        args.add("clean")
-        runNewProcess(args)
-        // TODO @important: Unlock
-//        val processBuilder = ProcessBuilder(args)
-//        processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-//        processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
-//        processBuilder.start()
-//        exitProcess(0)
+        val launcher: Path? = getNativeLauncherPath()
+        // FIXME : Is this the best way to handle things?
+        // NOTE: Having no launcher currently causes the program to crash.
+        // Technically it could keep running, but it would be running from
+        // the temporary directory, which could compound issues.
+        if (launcher == null) {
+            UpdateUtil.showErrorMessage(UpdateUtil.NO_LAUNCHER_PATH)
+            exitProcess(1)
+        }
+        argsArr.add(getNativeLauncherPath().toString())
+        argsArr.add("--clean")
+        runNewProcess(argsArr)
     }
 
     override fun clean(): Boolean {

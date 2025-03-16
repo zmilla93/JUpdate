@@ -27,7 +27,7 @@
 //import java.util.concurrent.ScheduledExecutorService;
 //import java.util.concurrent.TimeUnit;
 //
-///**
+/// **
 // * An update system for a single JAR program using the GitHub API.
 // * <p>
 // * Example Usage:
@@ -78,7 +78,7 @@
 //     * @param appInfo   Information about the currently running app
 //     */
 //    public UpdateManager(String author, String repo, Path directory, AppInfo appInfo, boolean allowPreRelease) {
-////        this.DIRECTORY = directory;
+/// /        this.DIRECTORY = directory;
 //        // FIXME : Just store app version?
 //        this.CURRENT_VERSION = appInfo.appVersion;
 //        this.allowPreRelease = allowPreRelease;

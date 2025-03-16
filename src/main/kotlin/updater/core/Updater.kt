@@ -93,6 +93,9 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
     }
 
     /** True if the currently running program was launched after running the auto updater */
+    // FIXME : Rename to wasJustCleaned and have wasJustUpdated compare version with stored version?
+    //  This would be more explicit because you still clean after a failed update, but also requires
+    //  a more complicated project setup by default (cacheing version).
     fun wasJustUpdated(): Boolean {
         return wasJustUpdated
     }
@@ -104,7 +107,9 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
     abstract fun latestVersion(): AppVersion?
 
     /** Returns the absolute path to the platform specific launcher file. */
-    protected abstract fun getNativeLauncherPath(): Path?
+    open fun getNativeLauncherPath(): Path? {
+        return UpdateUtil.getWorkingDirectory().resolve(config.nativeExecutableName)
+    }
 
     /**
      * Step 1/6: Downloads the new file(s) to be installed, storing them in the temp directory.
@@ -140,8 +145,8 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
 
     /** Gets the current [UpdatePhase] based on the program arguments. */
     private fun getCurrentUpdateStep(args: ArgsList): UpdatePhase {
-        if (args.containsArg("patch")) return UpdatePhase.PATCH
-        if (args.containsArg("clean")) return UpdatePhase.CLEAN
+        if (args.containsArg("--patch")) return UpdatePhase.PATCH
+        if (args.containsArg("--clean")) return UpdatePhase.CLEAN
         return UpdatePhase.NONE
     }
 

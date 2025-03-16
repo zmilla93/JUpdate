@@ -121,7 +121,7 @@ if ($LASTEXITCODE -ne 0)
 }
 
 $title
-$successPrefix = "[] "
+$successPrefix = "> "
 $failPrefix =    "[FAILURE] >>>>>>>>>>>>>>>>>>>> "
 if($failed){
     $title = "BUILD FAILED >:("
@@ -148,7 +148,7 @@ Write-Host "portable : $( "{0:N2}" -f $portableTime.TotalSeconds )s"
 if($failedWinMSI) {
     Write-Host $failPrefix -NoNewLine
 }else{
-    Write-Host $failPrefix -NoNewLine
+    Write-Host $successPrefix -NoNewLine
 }
 Write-Host "msi      : $( "{0:N2}" -f $msiTime.TotalSeconds )s"
 Write-Host $sep

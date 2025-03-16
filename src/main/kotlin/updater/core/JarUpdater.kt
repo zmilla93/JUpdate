@@ -2,17 +2,11 @@ package io.github.zmilla93.updater.core
 
 import java.io.IOException
 import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import kotlin.system.exitProcess
 
 class JarUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHubConfig) :
     GitHubUpdater(args, config, githubConfig) {
-
-    override fun getNativeLauncherPath(): Path {
-        return Paths.get(UpdateUtil.getCurrentProgramPath())
-    }
 
     override fun unpack(): Boolean {
         // Do nothing
@@ -26,7 +20,7 @@ class JarUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHu
         newArgs.add("-jar")
         newArgs.add(config.tempDirectory.resolve(config.patcherFileName).toString())
         newArgs.add(launcherPathArg!!)
-        args.addArg("patch")
+        args.addArg("--patch")
         newArgs.addAll(args.list)
         // TODO @important: Unlock
         val processBuilder = ProcessBuilder(newArgs)

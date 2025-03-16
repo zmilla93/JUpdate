@@ -14,8 +14,8 @@ class MainFrame(args: Array<String>, version: AppVersion) : JFrame() {
         size = Dimension(400, 400)
         defaultCloseOperation = EXIT_ON_CLOSE
         var text = "Hello, World!~ ${args.joinToString { "," }}"
-        if (args.contains("clean")) text += " > Updated!! (cleaned)"
-        if (args.contains("patch")) text += " > Patched!!"
+        if (args.contains("--clean")) text += " > Updated!! (cleaned)"
+        if (args.contains("--patch")) text += " > Patched!!"
         text += " Version: $version"
         layout = BorderLayout()
         add(JLabel(text), BorderLayout.CENTER)

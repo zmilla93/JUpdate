@@ -1,17 +1,10 @@
 package io.github.zmilla93.updater.core
 
-import java.nio.file.Path
-
 class MSIUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHubConfig) :
     GitHubUpdater(args, config, githubConfig) {
 
     companion object {
         const val patcher = "msi-patcher.ps1"
-    }
-
-    // FIXME : Move this to Updater
-    override fun getNativeLauncherPath(): Path? {
-        return UpdateUtil.getWorkingDirectory().resolve(config.nativeExecutableName)
     }
 
     override fun unpack(): Boolean {

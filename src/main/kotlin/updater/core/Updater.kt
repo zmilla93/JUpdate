@@ -202,9 +202,9 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
             val update = isUpdateAvailable(true)
             if (update) {
                 // FIXME @important: Switch to callback
+                logger.info("Update Available!!!!!!")
 //                FrameManager.displayUpdateAvailable(getLatestReleaseTag());
             } else {
-                741
                 runPeriodicUpdateCheck(delay, timeUnit)
             }
         }, delay.toLong(), timeUnit)

@@ -9,6 +9,7 @@ import io.github.zmilla93.updater.listening.DownloadProgressAdapter
 import org.slf4j.LoggerFactory
 import updater.data.AppVersion
 import java.nio.file.Paths
+import java.util.concurrent.TimeUnit
 import javax.swing.SwingUtilities
 
 
@@ -62,7 +63,7 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
         updater.startUpdateProcess()
     } else {
         logger.info("No update available.")
-//        updater.runPeriodicUpdateCheck(10, TimeUnit.SECONDS)
+        updater.runPeriodicUpdateCheck(10, TimeUnit.SECONDS)
     }
     if (updater.wasJustUpdated()) {
         println("Was just updated!")

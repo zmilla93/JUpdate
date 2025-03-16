@@ -12,7 +12,7 @@ abstract class GitHubUpdater(
     private val githubAPI = GithubAPI(githubConfig, downloadProgressListeners)
 
     override fun isUpdateAvailable(forceCheck: Boolean): Boolean {
-        val latestRelease = githubAPI.latestRelease() ?: return false
+        val latestRelease = githubAPI.latestRelease(forceCheck) ?: return false
         val latestVersion = AppVersion(latestRelease.tag_name)
         return config.currentVersion != latestVersion
     }

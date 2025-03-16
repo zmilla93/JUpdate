@@ -43,12 +43,12 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     val updater = createUpdater(args, currentVersion)
     if (updater == null) System.err.println("Updater is null!")
     else {
-        updater.handleCurrentlyRunningUpdate(args)
+        updater.handleCurrentlyRunningUpdate()
         logger.info("Latest Version: " + updater.latestVersion())
         logger.info("Distribution Type: " + DistributionType.getTypeFromArgs(args))
         if (updater.isUpdateAvailable()) {
             updater.startUpdateProcess()
-        }else{
+        } else {
             logger.info("No update available.")
         }
         if (updater.wasJustUpdated()) {
@@ -62,7 +62,7 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
 
 fun createUpdater(args: Array<String>, currentVersion: AppVersion): AbstractUpdater? {
     val jarName = "JUpdate.jar"
-    val msiName = "JUpdate-win-portable.msi"
+    val msiName = "JUpdate-win-installer.msi"
     val githubConfig = GitHubConfig("zmilla93", "JUpdate")
     // FIXME : TEMP DIR
 //    val args

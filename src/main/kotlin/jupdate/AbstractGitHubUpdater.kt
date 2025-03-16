@@ -2,9 +2,6 @@ package io.github.zmilla93.jupdate
 
 import io.github.zmilla93.updater.github.GithubAPI
 import updater.data.AppVersion
-import java.io.IOException
-import java.nio.file.*
-import java.nio.file.attribute.BasicFileAttributes
 
 abstract class AbstractGitHubUpdater(
     args: Array<String>,
@@ -73,19 +70,20 @@ abstract class AbstractGitHubUpdater(
     }
 
     override fun clean(): Boolean {
-        Files.walkFileTree(config.tempDirectory, object : SimpleFileVisitor<Path>() {
-            @Throws(IOException::class)
-            override fun postVisitDirectory(dir: Path?, exc: IOException?): FileVisitResult {
-                if (dir != null) Files.deleteIfExists(dir)
-                return FileVisitResult.CONTINUE
-            }
-
-            @Throws(IOException::class)
-            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
-                Files.deleteIfExists(file)
-                return FileVisitResult.CONTINUE
-            }
-        })
+        // FIXME : Implement, then move to Updater base class
+//        Files.walkFileTree(config.tempDirectory, object : SimpleFileVisitor<Path>() {
+//            @Throws(IOException::class)
+//            override fun postVisitDirectory(dir: Path?, exc: IOException?): FileVisitResult {
+//                if (dir != null) Files.deleteIfExists(dir)
+//                return FileVisitResult.CONTINUE
+//            }
+//
+//            @Throws(IOException::class)
+//            override fun visitFile(file: Path, attrs: BasicFileAttributes): FileVisitResult {
+//                Files.deleteIfExists(file)
+//                return FileVisitResult.CONTINUE
+//            }
+//        })
         return true
     }
 

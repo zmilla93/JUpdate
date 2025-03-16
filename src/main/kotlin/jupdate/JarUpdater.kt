@@ -6,7 +6,8 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import kotlin.system.exitProcess
 
-class JarUpdater(args:Array<String>, config: UpdaterConfig, githubConfig: GitHubConfig) : AbstractGitHubUpdater(args, config, githubConfig) {
+class JarUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHubConfig) :
+    AbstractGitHubUpdater(args, config, githubConfig) {
 
     override fun unpack(): Boolean {
         // Do nothing
@@ -14,15 +15,16 @@ class JarUpdater(args:Array<String>, config: UpdaterConfig, githubConfig: GitHub
     }
 
     override fun runPatch() {
-        val args = ArrayList<String>()
+        val newArgs = ArrayList<String>()
         // TODO @important: Add launcher
-        args.add("java")
-        args.add("-jar")
-        args.add(config.tempDirectory.resolve(config.patcherFileName).toString())
-        args.add(launcherPathArg!!)
-        args.add("patch")
+        newArgs.add("java")
+        newArgs.add("-jar")
+        newArgs.add(config.tempDirectory.resolve(config.patcherFileName).toString())
+        newArgs.add(launcherPathArg!!)
+        args.addArg("patch")
+        newArgs.addAll(args.list)
         // TODO @important: Unlock
-        val processBuilder = ProcessBuilder(args)
+        val processBuilder = ProcessBuilder(newArgs)
         processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
         processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
         processBuilder.start()

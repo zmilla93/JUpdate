@@ -2,13 +2,12 @@ package io.github.zmilla93.updater.github
 
 import com.google.gson.Gson
 import io.github.zmilla93.jupdate.GitHubConfig
+import io.github.zmilla93.jupdate.UpdateUtil
 import org.slf4j.LoggerFactory
 import updater.IUpdateProgressListener
 import java.io.*
-import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URI
-import java.net.URL
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -99,35 +98,13 @@ class GithubAPI(
             // GitHub API only suppers TSLv1.2
             val sslContext = SSLContext.getInstance("TLSv1.2")
             sslContext.init(null, null, SecureRandom())
-            val client: HttpClient = HttpClient.newBuilder()
-                .sslContext(sslContext)
-                .build()
+            val client: HttpClient = UpdateUtil.getHTTPClient()
             val request = HttpRequest.newBuilder()
                 .uri(URI.create(endpoint))
                 .GET()
-                .header("Accept", "application/json")
                 .build()
             val response: HttpResponse<String> = client.send(request, HttpResponse.BodyHandlers.ofString())
-
-            println("DATA: " + response.body())
             return response.body()
-//            val httpConnection = (URL(endpoint).openConnection()) as HttpURLConnection
-//            val inputStream: BufferedReader
-//            try {
-//                inputStream = BufferedReader(InputStreamReader(httpConnection.inputStream, StandardCharsets.UTF_8))
-//            } catch (e: FileNotFoundException) {
-//                logger.error("File not found. Either the URL is wrong or this repo has no releases.")
-//                return null
-//            } catch (e: IOException) {
-//                logger.error("Failed to connect to GitHub. This is either a connection issue or the API rate limit has been exceeded.")
-//                e.printStackTrace()
-//                return null
-//            }
-//            val builder = StringBuilder()
-//            while (inputStream.ready()) builder.append(inputStream.readLine())
-//            inputStream.close()
-//            logger.info("Release data fetched successfully!")
-//            return builder.toString()
         } catch (e: MalformedURLException) {
             logger.error("Malformed releases URL: $ALL_RELEASES_ENDPOINT")
             e.printStackTrace()
@@ -147,9 +124,21 @@ class GithubAPI(
             logger.info("\tSource      : $source");
             logger.info("\tDestination : $destination");
             Files.createDirectories(destination.parent)
-            val httpConnection = URL(source).openConnection() as HttpURLConnection
-            val fileSize = httpConnection.getContentLength()
-            val inputStream = BufferedInputStream(httpConnection.inputStream)
+//            val httpConnection = URL(source).openConnection() as HttpURLConnection
+//            val fileSize = httpConnection.getContentLength()
+            val client = UpdateUtil.getHTTPClient()
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(source))
+                .header("User-Agent", "Mozilla/5.0")
+                .header("Accept", "*/*")
+                .GET()
+                .build();
+            val response: HttpResponse<InputStream> = client.send(request, HttpResponse.BodyHandlers.ofInputStream())
+            logger.info("Reponse code: " + response.statusCode())
+            logger.info("Location: " + response.headers().firstValue("Location"))
+            val fileSize: Long = response.headers().firstValueAsLong("Content-Length").orElse(-1)
+            logger.info("File size: $fileSize")
+            val inputStream = BufferedInputStream(response.body())
             val outputStream = BufferedOutputStream(Files.newOutputStream(destination))
             val data = ByteArray(BYTE_BUFFER_SIZE)
             var totalBytesRead = 0

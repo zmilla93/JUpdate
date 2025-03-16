@@ -3,11 +3,13 @@ package io.github.zmilla93.jupdate
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URISyntaxException
+import java.net.http.HttpClient
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
+import java.security.SecureRandom
 import java.util.regex.Matcher
+import javax.net.ssl.SSLContext
 import kotlin.system.exitProcess
 
 class UpdateUtil {
@@ -49,16 +51,14 @@ class UpdateUtil {
                 println("Resource: " + sourceStr)
                 println("Creating Dir: " + destination.parent)
                 val dir = Files.createDirectories(destination.parent)
-                val src = Paths.get(sourceStr);
                 println("Result dir: " + dir)
                 val reader = BufferedReader(InputStreamReader(stream, StandardCharsets.UTF_8))
                 val output = destination.resolve(sourceStr)
                 println("dest: $destination")
                 println("src: $sourceStr")
-                println("srcP: $src")
                 println("out: $output")
                 val writer = Files.newOutputStream(output).bufferedWriter(StandardCharsets.UTF_8)
-                while (reader.ready()) writer.write(reader.readLine())
+                while (reader.ready()) writer.write(reader.readLine() + "\n")
                 reader.close()
                 writer.close()
                 return true
@@ -69,11 +69,14 @@ class UpdateUtil {
             return false
         }
 
-        fun runNewProcess(vararg args: String) {
-            runNewProcess(*args)
-        }
+//        fun runNewProcess(vararg args: String) {
+////            val argsList = ArrayList<String>(*args)
+//            val argsList = args.asList()
+//            runNewProcess(argsList)
+//        }
 
         /** Starts a new process while terminating the currently running program. */
+        // FIXME : Switch to ArgsList?
         fun runNewProcess(args: ArrayList<String>) {
             // TODO @important: Unlock (or closeCurrentProcess?)
             val processBuilder = ProcessBuilder(args)
@@ -81,6 +84,15 @@ class UpdateUtil {
             processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
             processBuilder.start()
             exitProcess(0)
+        }
+
+        fun getHTTPClient(): HttpClient {
+            val sslContext = SSLContext.getInstance("TLSv1.2")
+            sslContext.init(null, null, SecureRandom())
+            return HttpClient.newBuilder()
+                .sslContext(sslContext)
+                .followRedirects(HttpClient.Redirect.ALWAYS)
+                .build()
         }
 
     }

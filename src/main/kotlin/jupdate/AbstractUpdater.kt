@@ -47,8 +47,8 @@ abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig
      * This must be called before anything else using the program launch args.
      * The update process will continue (if running) based on the program args.
      */
-    fun handleCurrentlyRunningUpdate(args: Array<String>) {
-        validateLauncherPath(args)
+    fun handleCurrentlyRunningUpdate() {
+        validateLauncherPath()
         currentUpdateStep = getCurrentUpdateStep(args)
         when (currentUpdateStep) {
             UpdateStep.NONE -> {}
@@ -107,9 +107,9 @@ abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig
     protected abstract fun clean(): Boolean
 
     /** Gets the current [UpdateStep] based on the program arguments. */
-    private fun getCurrentUpdateStep(args: Array<String>): UpdateStep {
-        if (args.contains("patch")) return UpdateStep.PATCH
-        if (args.contains("clean")) return UpdateStep.CLEAN
+    private fun getCurrentUpdateStep(args: ArgsList): UpdateStep {
+        if (args.containsArg("patch")) return UpdateStep.PATCH
+        if (args.containsArg("clean")) return UpdateStep.CLEAN
         return UpdateStep.NONE
     }
 
@@ -117,16 +117,19 @@ abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig
      * Checks if an existing launcher path was supplied by the program arguments.
      * If not, set it using the currently running program.
      */
-    private fun validateLauncherPath(argsArr: Array<String>): Array<String> {
-        val list = argsArr.toMutableList()
-        val existingLauncherArg = ArgsList.getFullArg(argsArr, LAUNCHER_PREFIX)
-        val distribution = ArgsList.getCleanArg(argsArr, DistributionType.ARG_PREFIX)
-        distributionType = DistributionType.getType(distribution)
-        if (distribution == null) {
-            logger.error("No distribution type was set! This app cannot be updated automatically.")
-        }
+    private fun validateLauncherPath() {
+//        val list = argsArr.toMutableList()
+//        val existingLauncherArg = ArgsList.getFullArg(argsArr, LAUNCHER_PREFIX)
+//        val distribution = ArgsList.getCleanArg(argsArr, DistributionType.ARG_PREFIX)
+//        distributionType = DistributionType.getType(distribution)
+//        if (distribution == null) {
+//            logger.error("No distribution type was set! This app cannot be updated automatically.")
+//        }
         if (args.containsArgPrefix(LAUNCHER_PREFIX)) launcherPath = args.getCleanArg(LAUNCHER_PREFIX)
-        else launcherPath = UpdateUtil.getCurrentProgramPath()
+        else {
+            launcherPath = UpdateUtil.getCurrentProgramPath()
+            args.addArg(LAUNCHER_PREFIX + launcherPath)
+        }
         logger.info("Launcher: $launcherPath")
 //        if (existingLauncherArg != null) {
 //            // Existing launch path
@@ -139,7 +142,7 @@ abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig
 //            list.add(launcherPathArg!!)
 //            return list.toTypedArray()
 //        }
-        return argsArr
+//        return argsArr
     }
 
 //    private fun getFullArg(args: Array<String>, argPrefix: String): String? {

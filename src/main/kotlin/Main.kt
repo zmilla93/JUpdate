@@ -23,6 +23,8 @@ class Main {
         @JvmStatic
         fun main(args: Array<String>) {
             println("App Launched: ${args.joinToString(prefix = "[", postfix = "]", separator = ",")}")
+            val javaVersion = System.getProperty("java.version")
+            println("Java version: $javaVersion")
             val properties = ProjectProperties()
             val version = AppVersion(properties.version)
             logger.info("Current Version: " + properties.version)

@@ -6,7 +6,7 @@
 
     <groupId>io.github.zmilla93</groupId>
     <artifactId>JUpdate</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 
     <properties>
         <main-class>io.github.zmilla93.Main</main-class>

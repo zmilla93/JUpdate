@@ -26,7 +26,7 @@ jobs:
           $appName = $pom.project.artifactId
           $version = $pom.project.version
           $javaVersion = $pom.project.properties."java-version"
-          mainClass = $pom.project.properties."main-class"
+          $mainClass = $pom.project.properties."main-class"
           echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "JAVA_VERSION=$javaVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append

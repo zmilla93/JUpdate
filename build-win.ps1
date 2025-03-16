@@ -33,7 +33,11 @@ else
 if ($LASTEXITCODE -ne 0)
 {
     mvn clean
-    throw("Failed to build JAR!")
+    if($LASTEXITCODE -eq 0){
+        throw("Failed to build JAR, but project was successfully cleaned. Make sure the project builds locally before distributing.")
+    }else{
+        throw("Failed to clean project. Make sure no other programs are using the 'target' folder, then try again.")
+    }
 }
 
 Write-Host "Running JDEPS... " -NoNewline

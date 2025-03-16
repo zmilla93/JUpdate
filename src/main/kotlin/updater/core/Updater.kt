@@ -48,13 +48,10 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
     // FIXME : Switch to generic "ProgressListener" that also passes a phase parameter
     val downloadProgressListeners = ArrayList<DownloadProgressListener>()
     val updatePhaseListeners = ArrayList<UpdatePhaseListener>()
+    private val nativeLauncherPath: Path = UpdateUtil.getWorkingDirectory().resolve(config.nativeExecutableName)
 
     companion object {
         const val LAUNCHER_PREFIX = "--launcher:"
-    }
-
-    init {
-
     }
 
     /**
@@ -107,8 +104,13 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
     abstract fun latestVersion(): AppVersion?
 
     /** Returns the absolute path to the platform specific launcher file. */
-    open fun getNativeLauncherPath(): Path? {
-        return UpdateUtil.getWorkingDirectory().resolve(config.nativeExecutableName)
+    open fun getNativeLauncherPath(): Path {
+        return nativeLauncherPath
+    }
+
+    open fun getNativeLauncherPathIfExists(): Path? {
+        if (nativeLauncherPath.toFile().exists()) return nativeLauncherPath
+        return null
     }
 
     /**
@@ -162,12 +164,12 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
 //        if (distribution == null) {
 //            logger.error("No distribution type was set! This app cannot be updated automatically.")
 //        }
-        if (args.containsArgPrefix(LAUNCHER_PREFIX)) launcherPath = args.getCleanArgPath(LAUNCHER_PREFIX)
-        else {
-            launcherPath = getNativeLauncherPath()
-            args.addArg(LAUNCHER_PREFIX + launcherPath)
-        }
-        logger.info("Launcher: $launcherPath()")
+//        if (args.containsArgPrefix(LAUNCHER_PREFIX)) launcherPath = args.getCleanArgPath(LAUNCHER_PREFIX)
+//        else {
+//            launcherPath = getNativeLauncherPath()
+//            args.addArg(LAUNCHER_PREFIX + launcherPath)
+//        }
+//        logger.info("Launcher: $launcherPath()")
 //        if (existingLauncherArg != null) {
 //            // Existing launch path
 //            launcherPathArg = existingLauncherArg
@@ -188,10 +190,10 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
      * argument using "--phase" ("--patch" or "--clean").
      */
     fun runNewProcess(args: ArrayList<String>) {
-        for (listener in updatePhaseListeners) listener.onProgramClose()
         val processBuilder = ProcessBuilder(args)
         processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
         processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
+        for (listener in updatePhaseListeners) listener.onProgramClose()
         processBuilder.start()
         exitProcess(0)
     }

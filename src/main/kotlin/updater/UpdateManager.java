@@ -100,12 +100,12 @@
 //            SwingUtilities.invokeAndWait(() -> {
 //                ZLogger.log("Creating update progress window.");
 //                // FIXME Switch to callback
-////                App.initializeThemes();
-////                VisibilityManager.hideAllFrames();
-////                FrameManager.updateProgressWindow = new UpdateProgressWindow(App.getAppInfo(), getLatestRelease().appVersion);
-////                addProgressListener(FrameManager.updateProgressWindow);
-////                FrameManager.updateProgressWindow.setVisible(true);
-////                FrameManager.updateProgressWindow.setAlwaysOnTop(true);
+/// /                App.initializeThemes();
+/// /                VisibilityManager.hideAllFrames();
+/// /                FrameManager.updateProgressWindow = new UpdateProgressWindow(App.getAppInfo(), getLatestRelease().appVersion);
+/// /                addProgressListener(FrameManager.updateProgressWindow);
+/// /                FrameManager.updateProgressWindow.setVisible(true);
+/// /                FrameManager.updateProgressWindow.setAlwaysOnTop(true);
 //            });
 //        } catch (InterruptedException | InvocationTargetException e) {
 //            throw new RuntimeException(e);

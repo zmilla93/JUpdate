@@ -3,7 +3,6 @@ package io.github.zmilla93.updater.core
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import kotlin.system.exitProcess
 
 class JarUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHubConfig) :
     GitHubUpdater(args, config, githubConfig) {
@@ -19,20 +18,16 @@ class JarUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHu
         newArgs.add("java")
         newArgs.add("-jar")
         newArgs.add(config.tempDirectory.resolve(config.patcherFileName).toString())
-        newArgs.add(launcherPathArg!!)
         args.addArg("--patch")
         newArgs.addAll(args.list)
         // TODO @important: Unlock
-        val processBuilder = ProcessBuilder(newArgs)
-        processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-        processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
-        processBuilder.start()
-        exitProcess(0)
+        runNewProcess(newArgs)
     }
 
     override fun patch(): Boolean {
         try {
             println("Copying files...")
+            // FIXME : launcherNullCheck
             Files.copy(
                 config.tempDirectory.resolve(config.patcherFileName),
                 getNativeLauncherPath(),

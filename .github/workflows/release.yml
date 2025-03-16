@@ -26,9 +26,11 @@ jobs:
           $appName = $pom.project.artifactId
           $version = $pom.project.version
           $javaVersion = $pom.project.properties."java-version"
+          mainClass = $pom.project.properties."main-class"
           echo "APPNAME=$appName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "JAVA_VERSION=$javaVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "MAIN_CLASS=$mainClass" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Java Setup
         uses: actions/setup-java@v3
@@ -64,7 +66,7 @@ jobs:
             --type app-image `
             --input target/jar `
             --main-jar ${{ env.APPNAME }}.jar `
-            --main-class io.github.zmilla93.MainKt `
+            --main-class ${{ env.MAIN_CLASS }} `
             --dest win-portable `
             --arguments '--distribution:win-portable'
           Compress-Archive -Path win-portable/* -Destination ${{ env.APPNAME }}-win-portable.zip
@@ -77,7 +79,7 @@ jobs:
             --type msi `
             --input target/jar `
             --main-jar ${{ env.APPNAME }}.jar `
-            --main-class io.github.zmilla93.MainKt `
+            --main-class ${{ env.MAIN_CLASS }} `
             --app-version ${{ env.VERSION }} `
             --dest win-msi `
             --arguments '--distribution:win-msi' `

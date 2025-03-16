@@ -78,7 +78,7 @@ class UpdateUtil {
         /** Starts a new process while terminating the currently running program. */
         // FIXME : Switch to ArgsList?
         fun runNewProcess(args: ArrayList<String>) {
-            // TODO @important: Unlock (or closeCurrentProcess?)
+            // TODO @important: Unlock (or onClosingProcess?)
             val processBuilder = ProcessBuilder(args)
             processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
             processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)

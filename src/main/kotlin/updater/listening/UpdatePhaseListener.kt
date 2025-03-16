@@ -2,29 +2,24 @@ package io.github.zmilla93.updater.listening
 
 import io.github.zmilla93.updater.core.Updater
 import io.github.zmilla93.updater.data.UpdatePhase
-import updater.data.AppVersion
 
 /**
- * Listens for update events emitted by an [Updater].
- * Use [UpdateListenerAdapter] if you only want specific overrides.
+ * Listens for [UpdatePhase] events emitted by an [Updater].
+ * Use [UpdatePhaseAdapter] if you only want specific overrides.
  */
-interface UpdateListener {
+interface UpdatePhaseListener {
 
-    /** Called when a new [UpdatePhase] begins. */
+    /** Called on the EDT when a new [UpdatePhase] begins. */
     fun onPhaseStart(updatePhase: UpdatePhase)
 
-    /** Called when an [UpdatePhase] completes. */
+    /** Called on the EDT when an [UpdatePhase] completes. */
     fun onPhaseComplete(updatePhase: UpdatePhase)
-
-    /**
-     * Called when a new update is detected from a delayed/async update check.
-     * For immediate/blocking checks, call Updater.isUpdateAvailable() directly.
-     */
-    fun onNewUpdateAvailable(newVersion: AppVersion)
 
     /**
      * Called when the program is about to close to start a new process, but before starting the new process.
      * Use this to clean up anything that might interfere with running the new process, such as file locking.
+     * This function is NOT called on the EDT, and is NOT intended as a general purpose shutdown hook. It is
+     * for ensuring a clean launch of the new program.
      */
     fun onProgramClose()
 

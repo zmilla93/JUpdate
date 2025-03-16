@@ -3,8 +3,8 @@ package io.github.zmilla93.updater.github
 import com.google.gson.Gson
 import io.github.zmilla93.updater.core.GitHubConfig
 import io.github.zmilla93.updater.core.UpdateUtil
+import io.github.zmilla93.updater.listening.DownloadProgressListener
 import org.slf4j.LoggerFactory
-import updater.DownloadProgressListener
 import java.io.*
 import java.net.MalformedURLException
 import java.net.URI
@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities
  *  api.github.com/repos/AUTHOR/REPO/releases
  *  api.github.com/repos/AUTHOR/REPO/releases/latest
  */
+// FIXME : Alert on EDT
 class GithubAPI(
     author: String,
     repo: String,

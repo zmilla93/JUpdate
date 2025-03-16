@@ -3,6 +3,7 @@ package updater;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import io.github.zmilla93.updater.listening.DownloadProgressListener;
 import updater.data.AppInfo;
 import updater.data.AppVersion;
 import updater.github.OLD_GitHubRelease;

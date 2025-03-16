@@ -3,11 +3,16 @@ package io.github.zmilla93.updater.core
 import io.github.zmilla93.updater.data.ArgsList
 import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.UpdatePhase
-import io.github.zmilla93.updater.listening.UpdateListener
+import io.github.zmilla93.updater.listening.DownloadProgressListener
+import io.github.zmilla93.updater.listening.UpdateCheckListener
+import io.github.zmilla93.updater.listening.UpdatePhaseListener
 import org.slf4j.LoggerFactory
-import updater.DownloadProgressListener
 import updater.data.AppVersion
 import java.nio.file.Path
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
+import javax.swing.SwingUtilities
 import kotlin.system.exitProcess
 
 /**
@@ -31,10 +36,18 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
     var launchArgs = emptyArray<String>()
     var distributionType = DistributionType.NONE
 
+    /** By default, all callbacks except onProgramClose are called on the EDT. */
+    var useEDT = true
+
+    /** Thread for running delayed update checks */
+    private val scheduler: ScheduledExecutorService = Executors.newScheduledThreadPool(1)
+    // TODO : Add a dontRelaunchAfterUpdate parameter to allow for downloading on close
+    // TODO : Add an abstracted version of (Silent, ShowProgress), but also need something for MSI and any other platform specific stuff
+
     // FIXME : Updater and GitHubAPI both use progress listeners, with Updater just being a passthrough. Is there a better way?
     // FIXME : Switch to generic "ProgressListener" that also passes a phase parameter
     val downloadProgressListeners = ArrayList<DownloadProgressListener>()
-    val updateListeners = ArrayList<UpdateListener>()
+    val updatePhaseListeners = ArrayList<UpdatePhaseListener>()
 
     companion object {
         const val LAUNCHER_PREFIX = "--launcher:"
@@ -85,7 +98,7 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
     }
 
     /** Returns true when a new update is available. */
-    abstract fun isUpdateAvailable(): Boolean
+    abstract fun isUpdateAvailable(forceCheck: Boolean = false): Boolean
 
     /** Returns the latest version from some remote API. */
     abstract fun latestVersion(): AppVersion?
@@ -94,32 +107,34 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
     protected abstract fun getNativeLauncherPath(): Path?
 
     /**
-     * Step 1/6: Downloads the new file(s) to be installed.
+     * Step 1/6: Downloads the new file(s) to be installed, storing them in the temp directory.
+     * Return true on success
      */
     protected abstract fun download(): Boolean
 
     /**
-     * Step 2/6: Hands any preprocessing on the newly downloaded files, like unzipping or creating a patcher file.
-     * Might also do nothing.
+     * Step 2/6: Handles any preprocessing on the newly downloaded files, like unzipping or creating a patcher file.
+     * Might do nothing. Returns true on success.
      */
     protected abstract fun unpack(): Boolean
 
     /**
-     * Step 3/6: Start a new process that handles patching while terminating the current process.
+     * Step 3/6: Starts a new process that handles patching while terminating the current process.
      * Patching must run in a new process to allow overwriting of the original files.
+     * This gets run using the "--patch" arg when using a built-in patcher.
      */
     protected abstract fun runPatch()
 
     /**
-     * Step 4/6: Overwrite the old files with the new files.
+     * Step 4/6: Overwrites the old files with the new files.
      */
     protected abstract fun patch(): Boolean
 
-    /** Step 5/6: Start the newly installed process while passing the "--clean" parameter.  */
+    /** Step 5/6: Starts the newly installed process while passing the "--clean" parameter.  */
     protected abstract fun runClean()
 
     /**
-     * Step 6/6: Delete any temporary files. This also sets the wasJustUpdated flag to true.
+     * Step 6/6: Deletes any temporary files, and sets the wasJustUpdated flag to true.
      */
     protected abstract fun clean(): Boolean
 
@@ -168,7 +183,7 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
      * argument using "--phase" ("--patch" or "--clean").
      */
     fun runNewProcess(args: ArrayList<String>) {
-        for (listener in updateListeners) listener.onProgramClose()
+        for (listener in updatePhaseListeners) listener.onProgramClose()
         val processBuilder = ProcessBuilder(args)
         processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
         processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
@@ -176,17 +191,45 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
         exitProcess(0)
     }
 
+    /**
+     * Runs an update check after a given length of time.
+     * Use an [UpdateCheckListener] to listen for new update events.
+     */
+    fun runPeriodicUpdateCheck(delay: Int, timeUnit: TimeUnit) {
+        logger.info("Scheduling an update check to run in $delay ${timeUnit}(s).")
+        scheduler.schedule(Runnable {
+            logger.info("Running periodic update check...")
+            val update = isUpdateAvailable(true)
+            if (update) {
+                // FIXME @important: Switch to callback
+//                FrameManager.displayUpdateAvailable(getLatestReleaseTag());
+            } else {
+                741
+                runPeriodicUpdateCheck(delay, timeUnit)
+            }
+        }, delay.toLong(), timeUnit)
+    }
+
     //
     // Listener Events
     //
 
     fun alertPhaseStart(updatePhase: UpdatePhase) {
-        for (listener in updateListeners) listener.onPhaseStart(updatePhase)
+        if (useEDT) SwingUtilities.invokeLater {
+            for (listener in updatePhaseListeners) listener.onPhaseStart(
+                updatePhase
+            )
+        }
+        else for (listener in updatePhaseListeners) listener.onPhaseStart(updatePhase)
     }
 
     fun alertPhaseComplete(updatePhase: UpdatePhase) {
-        for (listener in updateListeners) listener.onPhaseComplete(updatePhase)
-
+        if (useEDT) SwingUtilities.invokeLater {
+            for (listener in updatePhaseListeners) listener.onPhaseComplete(
+                updatePhase
+            )
+        }
+        else for (listener in updatePhaseListeners) listener.onPhaseComplete(updatePhase)
     }
 
     //
@@ -205,16 +248,16 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
         downloadProgressListeners.clear()
     }
 
-    fun addUpdateListener(listener: UpdateListener) {
-        updateListeners.add(listener)
+    fun addUpdateListener(listener: UpdatePhaseListener) {
+        updatePhaseListeners.add(listener)
     }
 
-    fun removeUpdateListener(listener: UpdateListener) {
-        updateListeners.remove(listener)
+    fun removeUpdateListener(listener: UpdatePhaseListener) {
+        updatePhaseListeners.remove(listener)
     }
 
     fun clearAllUpdateListeners() {
-        updateListeners.clear()
+        updatePhaseListeners.clear()
     }
 
 

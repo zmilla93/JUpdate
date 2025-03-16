@@ -1,11 +1,13 @@
 Current
 =======
+- Delayed alerts
+- Silent Param (for update on close)
 ~ Listener system
 + Progress tracking
-- Delayed alerts
+- Patch progress (win-portable)
 + Handle pass through args in updater
 - Handle pass through args in ps
-- Make MSI launcher after initial install
+- Make MSI launch after initial install
 - Make sure Jar updater didn't break? (it won't have distribution program arg without bat).
 - Build for other platforms
 - TODOs & FIXMEs
@@ -17,6 +19,10 @@ Current
 + Add distribution type as a program arg
 + Write ps script that runs the installer, then runs the original launcher
 + Write ps script that runs the installer, then runs the original launcher
+
+Finalize
+========
+Make sure alerts happen from EDT
 
 Low Priority
 ============

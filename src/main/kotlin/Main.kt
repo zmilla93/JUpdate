@@ -5,8 +5,8 @@ import io.github.zmilla93.gui.ProgressFrame
 import io.github.zmilla93.updater.core.*
 import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.ProjectProperties
+import io.github.zmilla93.updater.listening.DownloadProgressAdapter
 import org.slf4j.LoggerFactory
-import updater.DownloadProgressListener
 import updater.data.AppVersion
 import java.nio.file.Paths
 import javax.swing.SwingUtilities
@@ -22,20 +22,10 @@ class Main {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-
             println("App Launched: ${args.joinToString(prefix = "[", postfix = "]", separator = ",")}")
-            val currentProcess = ProcessHandle.current()
-            println("PID: " + currentProcess.pid())
-            println("Command: " + currentProcess.info().command().orElse("Unknown"))
-            println("Arguments: " + java.lang.String.join(" ", *currentProcess.info().arguments().orElse(arrayOf())))
-            println("Start Time: " + currentProcess.info().startInstant().orElse(null))
-            println("Total CPU Duration: " + currentProcess.info().totalCpuDuration().orElse(null))
-            println("Current Directory" + UpdateUtil.getWorkingDirectory())
             val properties = ProjectProperties()
             val version = AppVersion(properties.version)
-//    val distributionType = DistributionType.getTypeFromArgs(UpdateUtil.getCurrentProgramPath())
             logger.info("Current Version: " + properties.version)
-//    println("Distribution:" + distributionType)
             handleUpdateProcess(args, version)
             SwingUtilities.invokeLater {
                 val mainFrame = MainFrame(args, version)
@@ -57,40 +47,26 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
         return
     }
     updater.handleCurrentlyRunningUpdate()
-    updater.addDownloadProgressListener(object : DownloadProgressListener {
-        override fun onDownloadStart(fileName: String?) {
-
-        }
-
+    updater.addDownloadProgressListener(object : DownloadProgressAdapter() {
         override fun onDownloadProgress(progressPercent: Int) {
-            println("Progress: $progressPercent")
+            println("Progress::: " + progressPercent)
         }
-
-        override fun onDownloadComplete() {
-
-        }
-
-        override fun onDownloadFailed() {
-
-        }
-
     })
     logger.info("Latest Version: " + updater.latestVersion())
     logger.info("Distribution Type: " + DistributionType.getTypeFromArgs(args))
     if (updater.isUpdateAvailable()) {
-        SwingUtilities.invokeAndWait { progressFrame = ProgressFrame() }
+        SwingUtilities.invokeAndWait { progressFrame = ProgressFrame(updater.latestVersion()!!) }
         updater.addDownloadProgressListener(progressFrame!!)
         updater.startUpdateProcess()
     } else {
         logger.info("No update available.")
+//        updater.runPeriodicUpdateCheck(10, TimeUnit.SECONDS)
     }
     if (updater.wasJustUpdated()) {
         println("Was just updated!")
         return
     }
 
-
-//    if (updater.isUpdateAvailable()) updater.startUpdateProcess()
 }
 
 fun createUpdater(args: Array<String>, currentVersion: AppVersion): Updater? {

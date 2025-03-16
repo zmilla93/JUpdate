@@ -11,7 +11,7 @@ abstract class GitHubUpdater(
 
     private val githubAPI = GithubAPI(githubConfig, downloadProgressListeners)
 
-    override fun isUpdateAvailable(): Boolean {
+    override fun isUpdateAvailable(forceCheck: Boolean): Boolean {
         val latestRelease = githubAPI.latestRelease() ?: return false
         val latestVersion = AppVersion(latestRelease.tag_name)
         return config.currentVersion != latestVersion

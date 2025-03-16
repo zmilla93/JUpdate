@@ -1,6 +1,5 @@
 package io.github.zmilla93.jupdate
 
-import io.github.zmilla93.updater.data.DistributionType
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URISyntaxException
@@ -23,10 +22,9 @@ class UpdateUtil {
         val logger = LoggerFactory.getLogger(UpdateUtil::class.java.simpleName)
 
         /**
-         * Returns the directory containing the currently running .jar file.
-         * Use this to resolve the path of the platform specific launcher.
+         * Returns the directory containing the native launcher.
          */
-        fun getCurrentProgramDirectory(): Path {
+        fun getWorkingDirectory(): Path {
             return Paths.get(System.getProperty("user.dir"))
         }
 
@@ -39,7 +37,7 @@ class UpdateUtil {
         fun getCurrentProgramPath(): String {
             if (!hasCachedProgramPath) {
                 try {
-                    var path = AbstractUpdater::class.java.protectionDomain.codeSource.location.toURI().path
+                    var path = Updater::class.java.protectionDomain.codeSource.location.toURI().path
                     if (path.startsWith("/")) path = path.replaceFirst("/".toRegex(), "")
                     // FIXME : Is cleaning file separators required?
                     cachedProgramPath = path.replace("[/\\\\]".toRegex(), Matcher.quoteReplacement(File.separator))

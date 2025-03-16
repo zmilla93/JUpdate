@@ -3,11 +3,11 @@ package io.github.zmilla93.jupdate
 import io.github.zmilla93.updater.github.GithubAPI
 import updater.data.AppVersion
 
-abstract class AbstractGitHubUpdater(
+abstract class GitHubUpdater(
     args: Array<String>,
     config: UpdaterConfig,
     githubConfig: GitHubConfig
-) : AbstractUpdater(args, config) {
+) : Updater(args, config) {
 
     private val githubAPI = GithubAPI(githubConfig)
 
@@ -58,7 +58,7 @@ abstract class AbstractGitHubUpdater(
 //        args.add("java")
 //        args.add("-jar")
         // FIXME @important : Pass through program args
-        args.add(launcherPath.toString())
+        args.add(getNativeLauncherPath().toString())
 //        args.add(launcherPathArg!!)
         args.add("clean")
         UpdateUtil.runNewProcess(args)

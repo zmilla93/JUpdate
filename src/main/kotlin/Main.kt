@@ -6,8 +6,6 @@ import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.ProjectProperties
 import org.slf4j.LoggerFactory
 import updater.data.AppVersion
-import java.io.File
-import java.net.URL
 import java.nio.file.Paths
 import javax.swing.SwingUtilities
 
@@ -29,6 +27,7 @@ class Main {
             println("Arguments: " + java.lang.String.join(" ", *currentProcess.info().arguments().orElse(arrayOf())))
             println("Start Time: " + currentProcess.info().startInstant().orElse(null))
             println("Total CPU Duration: " + currentProcess.info().totalCpuDuration().orElse(null))
+            println("Current Directory" + UpdateUtil.getWorkingDirectory())
             val properties = ProjectProperties()
             val version = AppVersion(properties.version)
 //    val distributionType = DistributionType.getTypeFromArgs(UpdateUtil.getCurrentProgramPath())
@@ -69,7 +68,7 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
 //    if (updater.isUpdateAvailable()) updater.startUpdateProcess()
 }
 
-fun createUpdater(args: Array<String>, currentVersion: AppVersion): AbstractUpdater? {
+fun createUpdater(args: Array<String>, currentVersion: AppVersion): Updater? {
     val jarName = "JUpdate.jar"
     val msiName = "JUpdate-win-installer.msi"
     val githubConfig = GitHubConfig("zmilla93", "JUpdate")
@@ -78,7 +77,7 @@ fun createUpdater(args: Array<String>, currentVersion: AppVersion): AbstractUpda
     val tempDir = Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp\\")
     val jarConfig = UpdaterConfig(jarName, currentVersion, arrayOf(jarName), jarName, tempDir)
     val msiConfig = UpdaterConfig("JUpdate.exe", currentVersion, arrayOf(msiName), msiName, tempDir)
-    var updater: AbstractGitHubUpdater
+    var updater: GitHubUpdater
     val distributionType = DistributionType.getTypeFromArgs(args)
     when (distributionType) {
         DistributionType.NONE -> return null

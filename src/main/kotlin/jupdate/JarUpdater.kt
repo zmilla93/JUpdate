@@ -8,9 +8,9 @@ import java.nio.file.StandardCopyOption
 import kotlin.system.exitProcess
 
 class JarUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHubConfig) :
-    AbstractGitHubUpdater(args, config, githubConfig) {
+    GitHubUpdater(args, config, githubConfig) {
 
-    override fun getPathToCurrentLauncher(): Path? {
+    override fun getNativeLauncherPath(): Path? {
         return Paths.get(UpdateUtil.getCurrentProgramPath())
     }
 

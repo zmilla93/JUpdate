@@ -3,7 +3,7 @@ package io.github.zmilla93.jupdate
 import updater.data.AppVersion
 import java.nio.file.Path
 
-/** The minimal required configuration when implementing an [AbstractUpdater]. */
+/** The minimal required configuration when implementing an [Updater]. */
 open class UpdaterConfig(
     /** The name of the platform specific executable that runs the program. */
     val nativeExecutableName:String,

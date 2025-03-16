@@ -12,12 +12,12 @@ import java.nio.file.Path
  * Patching happens from a temporary process, and clean is run on the newly installed
  * process, which is handled with runPatch and runClean.
  */
-abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig) {
+abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
 
-    /** Path to the originally running program */
     val args = ArgsList(argsArr)
+    /** Path to the originally running program */
+    @Deprecated("Use native launcher path")
     var launcherPath: Path? = null
-
     @Deprecated("Use launcherPath and args")
     var launcherPathArg: String? = null
     var currentUpdateStep = UpdateStep.NONE
@@ -80,8 +80,8 @@ abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig
     /** Returns the latest version from some remote API. */
     abstract fun latestVersion(): AppVersion?
 
-    //FIXME @important : Remove once namespace issue is fixed
-    protected abstract fun getPathToCurrentLauncher(): Path?
+    /** Returns the absolute path to the platform specific launcher file. */
+    protected abstract fun getNativeLauncherPath(): Path?
 
     /**
      * Step 1/4: Downloads the new file(s) to be installed.
@@ -133,7 +133,7 @@ abstract class AbstractUpdater(argsArr: Array<String>, val config: UpdaterConfig
 //        }
         if (args.containsArgPrefix(LAUNCHER_PREFIX)) launcherPath = args.getCleanArgPath(LAUNCHER_PREFIX)
         else {
-            launcherPath = getPathToCurrentLauncher()
+            launcherPath = getNativeLauncherPath()
             args.addArg(LAUNCHER_PREFIX + launcherPath)
         }
         logger.info("Launcher: $launcherPath()")

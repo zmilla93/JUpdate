@@ -34,7 +34,7 @@ if ($LASTEXITCODE -ne 0)
 {
     mvn clean
     if($LASTEXITCODE -eq 0){
-        throw("Failed to build JAR, but project was successfully cleaned. Make sure the project builds locally before distributing.")
+        throw("Failed to build JAR, but project was successfully cleaned. Make sure the project builds locally before building for distribution.")
     }else{
         throw("Failed to clean project. Make sure no other programs are using the 'target' folder, then try again.")
     }

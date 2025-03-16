@@ -1,4 +1,4 @@
-package io.github.zmilla93.jupdate
+package io.github.zmilla93.updater.core
 
 import org.slf4j.LoggerFactory
 import java.io.*
@@ -11,7 +11,6 @@ import java.nio.file.Paths
 import java.security.SecureRandom
 import java.util.regex.Matcher
 import javax.net.ssl.SSLContext
-import kotlin.system.exitProcess
 
 class UpdateUtil {
 
@@ -84,16 +83,16 @@ class UpdateUtil {
 //            runNewProcess(argsList)
 //        }
 
-        /** Starts a new process while terminating the currently running program. */
+
         // FIXME : Switch to ArgsList?
-        fun runNewProcess(args: ArrayList<String>) {
-            // TODO @important: Unlock (or onClosingProcess?)
-            val processBuilder = ProcessBuilder(args)
-            processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
-            processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
-            processBuilder.start()
-            exitProcess(0)
-        }
+//        fun runNewProcess(args: ArrayList<String>) {
+//            // TODO @important: Unlock (or onClosingProcess?)
+//            val processBuilder = ProcessBuilder(args)
+//            processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+//            processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
+//            processBuilder.start()
+//            exitProcess(0)
+//        }
 
         fun getHTTPClient(): HttpClient {
             val sslContext = SSLContext.getInstance("TLSv1.2")

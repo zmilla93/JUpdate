@@ -1,11 +1,14 @@
-package io.github.zmilla93.jupdate
+package io.github.zmilla93.updater.core
 
-import io.github.zmilla93.ArgsList
+import io.github.zmilla93.updater.data.ArgsList
 import io.github.zmilla93.updater.data.DistributionType
-import io.github.zmilla93.updater.data.UpdateStep
+import io.github.zmilla93.updater.data.UpdatePhase
+import io.github.zmilla93.updater.listening.UpdateListener
 import org.slf4j.LoggerFactory
+import updater.DownloadProgressListener
 import updater.data.AppVersion
 import java.nio.file.Path
+import kotlin.system.exitProcess
 
 /**
  * Abstracts the update process into 4 steps: download, unpack, patch, clean.
@@ -15,16 +18,23 @@ import java.nio.file.Path
 abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
 
     val args = ArgsList(argsArr)
+
     /** Path to the originally running program */
     @Deprecated("Use native launcher path")
     var launcherPath: Path? = null
+
     @Deprecated("Use launcherPath and args")
     var launcherPathArg: String? = null
-    var currentUpdateStep = UpdateStep.NONE
+    var currentUpdatePhase = UpdatePhase.NONE
     private var wasJustUpdated = false
     protected val logger = LoggerFactory.getLogger(javaClass.simpleName)
     var launchArgs = emptyArray<String>()
     var distributionType = DistributionType.NONE
+
+    // FIXME : Updater and GitHubAPI both use progress listeners, with Updater just being a passthrough. Is there a better way?
+    // FIXME : Switch to generic "ProgressListener" that also passes a phase parameter
+    val downloadProgressListeners = ArrayList<DownloadProgressListener>()
+    val updateListeners = ArrayList<UpdateListener>()
 
     companion object {
         const val LAUNCHER_PREFIX = "--launcher:"
@@ -52,17 +62,17 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
      */
     fun handleCurrentlyRunningUpdate() {
         validateLauncherPath()
-        currentUpdateStep = getCurrentUpdateStep(args)
-        when (currentUpdateStep) {
-            UpdateStep.NONE -> {}
-            UpdateStep.DOWNLOAD -> download()
-            UpdateStep.UNPACK -> unpack()
-            UpdateStep.PATCH -> {
+        currentUpdatePhase = getCurrentUpdateStep(args)
+        when (currentUpdatePhase) {
+            UpdatePhase.NONE -> {}
+            UpdatePhase.DOWNLOAD -> download()
+            UpdatePhase.UNPACK -> unpack()
+            UpdatePhase.PATCH -> {
                 patch()
                 runClean()
             }
 
-            UpdateStep.CLEAN -> {
+            UpdatePhase.CLEAN -> {
                 wasJustUpdated = true
                 clean()
             }
@@ -84,39 +94,40 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
     protected abstract fun getNativeLauncherPath(): Path?
 
     /**
-     * Step 1/4: Downloads the new file(s) to be installed.
+     * Step 1/6: Downloads the new file(s) to be installed.
      */
     protected abstract fun download(): Boolean
 
     /**
-     * Step 2/4: Handles and preprocessing on the newly downloaded files, like unzipping.
+     * Step 2/6: Hands any preprocessing on the newly downloaded files, like unzipping or creating a patcher file.
      * Might also do nothing.
      */
     protected abstract fun unpack(): Boolean
 
-    /** Patching must run in a new process using temp files to allow overwriting of the old files. */
+    /**
+     * Step 3/6: Start a new process that handles patching while terminating the current process.
+     * Patching must run in a new process to allow overwriting of the original files.
+     */
     protected abstract fun runPatch()
 
     /**
-     * Step 3/4: Overwrite the old files with the new files. This is run as a new process,
-     * typically using the temporary files, so that the original files can be overwritten.
+     * Step 4/6: Overwrite the old files with the new files.
      */
     protected abstract fun patch(): Boolean
 
-    /** Cleaning must run in a new process using the newly installed files.  */
+    /** Step 5/6: Start the newly installed process while passing the "--clean" parameter.  */
     protected abstract fun runClean()
 
     /**
-     * Step 4/4: Delete any temporary files. This is run as a new process using the newly
-     * installed files. This MUST set wasJustUpdated to true.
+     * Step 6/6: Delete any temporary files. This also sets the wasJustUpdated flag to true.
      */
     protected abstract fun clean(): Boolean
 
-    /** Gets the current [UpdateStep] based on the program arguments. */
-    private fun getCurrentUpdateStep(args: ArgsList): UpdateStep {
-        if (args.containsArg("patch")) return UpdateStep.PATCH
-        if (args.containsArg("clean")) return UpdateStep.CLEAN
-        return UpdateStep.NONE
+    /** Gets the current [UpdatePhase] based on the program arguments. */
+    private fun getCurrentUpdateStep(args: ArgsList): UpdatePhase {
+        if (args.containsArg("patch")) return UpdatePhase.PATCH
+        if (args.containsArg("clean")) return UpdatePhase.CLEAN
+        return UpdatePhase.NONE
     }
 
     /**
@@ -150,6 +161,62 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
 //        }
 //        return argsArr
     }
+
+    /**
+     * Starts a new process then immediately terminates the currently running process.
+     * If the new process handles multiple [UpdatePhase]s, pass the phase name as an
+     * argument using "--phase" ("--patch" or "--clean").
+     */
+    fun runNewProcess(args: ArrayList<String>) {
+        for (listener in updateListeners) listener.onProgramClose()
+        val processBuilder = ProcessBuilder(args)
+        processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+        processBuilder.redirectError(ProcessBuilder.Redirect.INHERIT)
+        processBuilder.start()
+        exitProcess(0)
+    }
+
+    //
+    // Listener Events
+    //
+
+    fun alertPhaseStart(updatePhase: UpdatePhase) {
+        for (listener in updateListeners) listener.onPhaseStart(updatePhase)
+    }
+
+    fun alertPhaseComplete(updatePhase: UpdatePhase) {
+        for (listener in updateListeners) listener.onPhaseComplete(updatePhase)
+
+    }
+
+    //
+    // Add/Remove Listeners
+    //
+
+    fun addDownloadProgressListener(listener: DownloadProgressListener) {
+        downloadProgressListeners.add(listener)
+    }
+
+    fun removeDownloadProgressListener(listener: DownloadProgressListener) {
+        downloadProgressListeners.remove(listener)
+    }
+
+    fun clearDownloadProgressListeners() {
+        downloadProgressListeners.clear()
+    }
+
+    fun addUpdateListener(listener: UpdateListener) {
+        updateListeners.add(listener)
+    }
+
+    fun removeUpdateListener(listener: UpdateListener) {
+        updateListeners.remove(listener)
+    }
+
+    fun clearAllUpdateListeners() {
+        updateListeners.clear()
+    }
+
 
 //    private fun getFullArg(args: Array<String>, argPrefix: String): String? {
 //        return args.find { it.startsWith(argPrefix) }

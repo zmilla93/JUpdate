@@ -1,4 +1,4 @@
-package io.github.zmilla93.jupdate
+package io.github.zmilla93.updater.core
 
 import java.nio.file.Path
 
@@ -9,6 +9,7 @@ class MSIUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHu
         const val patcher = "msi-patcher.ps1"
     }
 
+    // FIXME : Move this to Updater
     override fun getNativeLauncherPath(): Path? {
         return UpdateUtil.getWorkingDirectory().resolve(config.nativeExecutableName)
     }
@@ -23,7 +24,7 @@ class MSIUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHu
         args.addArg("--installer:" + config.tempDirectory.resolve(config.assetNames[0]))
         println("Patcher Args: " + args.list)
         // FIXME : This line is ugly
-        UpdateUtil.runNewProcess(arrayListOf(*args.list.toTypedArray()))
+        runNewProcess(arrayListOf(*args.list.toTypedArray()))
     }
 
     override fun patch(): Boolean {

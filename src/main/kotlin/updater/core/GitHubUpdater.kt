@@ -1,4 +1,4 @@
-package io.github.zmilla93.jupdate
+package io.github.zmilla93.updater.core
 
 import io.github.zmilla93.updater.github.GithubAPI
 import updater.data.AppVersion
@@ -9,7 +9,7 @@ abstract class GitHubUpdater(
     githubConfig: GitHubConfig
 ) : Updater(args, config) {
 
-    private val githubAPI = GithubAPI(githubConfig)
+    private val githubAPI = GithubAPI(githubConfig, downloadProgressListeners)
 
     override fun isUpdateAvailable(): Boolean {
         val latestRelease = githubAPI.latestRelease() ?: return false
@@ -61,7 +61,7 @@ abstract class GitHubUpdater(
         args.add(getNativeLauncherPath().toString())
 //        args.add(launcherPathArg!!)
         args.add("clean")
-        UpdateUtil.runNewProcess(args)
+        runNewProcess(args)
         // TODO @important: Unlock
 //        val processBuilder = ProcessBuilder(args)
 //        processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)

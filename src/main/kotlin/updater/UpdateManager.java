@@ -62,7 +62,7 @@ public class UpdateManager {
     private final boolean allowPreRelease;
     private String launchPath;
     private UpdateAction currentAction = UpdateAction.NONE;
-    private final ArrayList<IUpdateProgressListener> progressListeners = new ArrayList<>();
+    private final ArrayList<DownloadProgressListener> progressListeners = new ArrayList<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     private static final int MAX_ACTION_ATTEMPTS = 15;
@@ -213,8 +213,6 @@ public class UpdateManager {
         try {
             ZLogger.log("Running '" + updateAction + "' process... " + Arrays.toString(args.toArray()));
             ZLogger.close();
-            // FIXME @important : unlock app
-//            App.unlock();
             builder.start();
             System.exit(0);
         } catch (IOException e) {
@@ -308,7 +306,7 @@ public class UpdateManager {
         }
     }
 
-    
+
     private String getCurrentlyRunningProgram() {
         try {
             String path = UpdateManager.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
@@ -333,11 +331,11 @@ public class UpdateManager {
 
     /// //////////////////////
 
-    public void addProgressListener(IUpdateProgressListener progressListener) {
+    public void addProgressListener(DownloadProgressListener progressListener) {
         progressListeners.add(progressListener);
     }
 
-    public void removeProgressListener(IUpdateProgressListener progressListener) {
+    public void removeProgressListener(DownloadProgressListener progressListener) {
         progressListeners.remove(progressListener);
     }
 
@@ -369,7 +367,7 @@ public class UpdateManager {
                 int newProgressPercent = Math.round((float) totalBytesRead / fileSize * 100);
                 if (newProgressPercent != currentProgressPercent) {
                     currentProgressPercent = newProgressPercent;
-                    for (IUpdateProgressListener listener : progressListeners) {
+                    for (DownloadProgressListener listener : progressListeners) {
                         int finalCurrentProgressPercent = currentProgressPercent;
                         SwingUtilities.invokeLater(() -> listener.onDownloadProgress(finalCurrentProgressPercent));
                     }
@@ -377,14 +375,14 @@ public class UpdateManager {
             }
             inputStream.close();
             outputStream.close();
-            for (IUpdateProgressListener listener : progressListeners) {
+            for (DownloadProgressListener listener : progressListeners) {
                 SwingUtilities.invokeLater(listener::onDownloadComplete);
             }
             return true;
         } catch (IOException e) {
             ZLogger.log("Error while downloading file!");
             ZLogger.log(e.getStackTrace());
-            for (IUpdateProgressListener listener : progressListeners)
+            for (DownloadProgressListener listener : progressListeners)
                 SwingUtilities.invokeLater(listener::onDownloadFailed);
             return false;
         }

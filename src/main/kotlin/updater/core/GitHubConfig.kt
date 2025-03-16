@@ -1,4 +1,4 @@
-package io.github.zmilla93.jupdate
+package io.github.zmilla93.updater.core
 
 class GitHubConfig(
     val author: String,

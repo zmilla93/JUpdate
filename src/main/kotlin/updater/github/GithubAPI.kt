@@ -1,10 +1,10 @@
 package io.github.zmilla93.updater.github
 
 import com.google.gson.Gson
-import io.github.zmilla93.jupdate.GitHubConfig
-import io.github.zmilla93.jupdate.UpdateUtil
+import io.github.zmilla93.updater.core.GitHubConfig
+import io.github.zmilla93.updater.core.UpdateUtil
 import org.slf4j.LoggerFactory
-import updater.IUpdateProgressListener
+import updater.DownloadProgressListener
 import java.io.*
 import java.net.MalformedURLException
 import java.net.URI
@@ -27,10 +27,15 @@ import javax.swing.SwingUtilities
 class GithubAPI(
     author: String,
     repo: String,
-    var allowPreRelease: Boolean = false
+    val progressListeners: ArrayList<DownloadProgressListener>,
+    var allowPreRelease: Boolean = false,
 ) {
 
-    constructor(config: GitHubConfig) : this(config.author, config.repo)
+    constructor(config: GitHubConfig, progressListeners: ArrayList<DownloadProgressListener>) : this(
+        config.author,
+        config.repo,
+        progressListeners
+    )
 
     // GitHub API Endpoints
     private val ALL_RELEASES_ENDPOINT: String = "https://api.github.com/repos/$author/$repo/releases"
@@ -47,7 +52,9 @@ class GithubAPI(
     // Internal
     private val logger = LoggerFactory.getLogger(javaClass.simpleName)
     private val gson = Gson()
-    private val progressListeners = ArrayList<IUpdateProgressListener>()
+
+
+//    val downloadProgressListeners = ArrayList<DownloadProgressListener>()
 
 
     // TODO : Add a function to fetch patch notes, and possibly save them to disk.
@@ -120,6 +127,8 @@ class GithubAPI(
         try {
 //            if (latestRelease == null) fetchLatestRelease();
 //            if (latestRelease == null) return false;
+            for (listener in progressListeners)
+                SwingUtilities.invokeLater { listener.onDownloadStart(source) }
             logger.info("Downloading file...");
             logger.info("\tSource      : $source");
             logger.info("\tDestination : $destination");
@@ -170,6 +179,18 @@ class GithubAPI(
                 SwingUtilities.invokeLater(listener::onDownloadFailed)
             return false
         }
+    }
+
+    fun addDownloadProgressListener(listener: DownloadProgressListener) {
+        progressListeners.add(listener)
+    }
+
+    fun removeDownloadProgressListener(listener: DownloadProgressListener) {
+        progressListeners.remove(listener)
+    }
+
+    fun clearDownloadProgressListeners() {
+        progressListeners.clear()
     }
 
 }

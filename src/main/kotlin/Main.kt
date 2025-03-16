@@ -1,10 +1,11 @@
 package io.github.zmilla93
 
 import io.github.zmilla93.gui.MainFrame
-import io.github.zmilla93.jupdate.*
+import io.github.zmilla93.updater.core.*
 import io.github.zmilla93.updater.data.DistributionType
 import io.github.zmilla93.updater.data.ProjectProperties
 import org.slf4j.LoggerFactory
+import updater.DownloadProgressListener
 import updater.data.AppVersion
 import java.nio.file.Paths
 import javax.swing.SwingUtilities
@@ -49,21 +50,41 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
 
 //    val updaterConfig =
     val updater = createUpdater(args, currentVersion)
-    if (updater == null) System.err.println("Updater is null!")
-    else {
-        updater.handleCurrentlyRunningUpdate()
-        logger.info("Latest Version: " + updater.latestVersion())
-        logger.info("Distribution Type: " + DistributionType.getTypeFromArgs(args))
-        if (updater.isUpdateAvailable()) {
-            updater.startUpdateProcess()
-        } else {
-            logger.info("No update available.")
-        }
-        if (updater.wasJustUpdated()) {
-            println("Was just updated!")
-            return
-        }
+    if (updater == null) {
+        System.err.println("Updater is null!")
+        return
     }
+    updater.handleCurrentlyRunningUpdate()
+    updater.addDownloadProgressListener(object : DownloadProgressListener {
+        override fun onDownloadStart(fileName: String?) {
+
+        }
+
+        override fun onDownloadProgress(progressPercent: Int) {
+            println("Progress: $progressPercent")
+        }
+
+        override fun onDownloadComplete() {
+
+        }
+
+        override fun onDownloadFailed() {
+
+        }
+
+    })
+    logger.info("Latest Version: " + updater.latestVersion())
+    logger.info("Distribution Type: " + DistributionType.getTypeFromArgs(args))
+    if (updater.isUpdateAvailable()) {
+        updater.startUpdateProcess()
+    } else {
+        logger.info("No update available.")
+    }
+    if (updater.wasJustUpdated()) {
+        println("Was just updated!")
+        return
+    }
+
 
 //    if (updater.isUpdateAvailable()) updater.startUpdateProcess()
 }

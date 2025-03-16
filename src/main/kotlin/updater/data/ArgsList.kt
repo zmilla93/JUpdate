@@ -1,4 +1,4 @@
-package io.github.zmilla93
+package io.github.zmilla93.updater.data
 
 import java.nio.file.Path
 import java.nio.file.Paths

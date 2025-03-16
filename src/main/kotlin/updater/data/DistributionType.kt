@@ -1,6 +1,5 @@
 package io.github.zmilla93.updater.data
 
-import io.github.zmilla93.ArgsList
 import org.slf4j.LoggerFactory
 
 /**

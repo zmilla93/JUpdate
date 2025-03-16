@@ -1,4 +1,4 @@
-package io.github.zmilla93.jupdate
+package io.github.zmilla93.updater.core
 
 import java.io.IOException
 import java.nio.file.Files
@@ -10,7 +10,7 @@ import kotlin.system.exitProcess
 class JarUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHubConfig) :
     GitHubUpdater(args, config, githubConfig) {
 
-    override fun getNativeLauncherPath(): Path? {
+    override fun getNativeLauncherPath(): Path {
         return Paths.get(UpdateUtil.getCurrentProgramPath())
     }
 
@@ -38,11 +38,10 @@ class JarUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHu
 
     override fun patch(): Boolean {
         try {
-//            Files.delete(Paths.get(launcherPath!!))
             println("Copying files...")
             Files.copy(
                 config.tempDirectory.resolve(config.patcherFileName),
-                launcherPath!!,
+                getNativeLauncherPath(),
                 StandardCopyOption.REPLACE_EXISTING
             )
             println("Files copied successfully!")

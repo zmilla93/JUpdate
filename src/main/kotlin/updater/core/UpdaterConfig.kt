@@ -1,4 +1,4 @@
-package io.github.zmilla93.jupdate
+package io.github.zmilla93.updater.core
 
 import updater.data.AppVersion
 import java.nio.file.Path
@@ -6,7 +6,7 @@ import java.nio.file.Path
 /** The minimal required configuration when implementing an [Updater]. */
 open class UpdaterConfig(
     /** The name of the platform specific executable that runs the program. */
-    val nativeExecutableName:String,
+    val nativeExecutableName: String,
     /** The [AppVersion] of the currently running program. */
     val currentVersion: AppVersion,
     // FIXME : Switch to an abstract getDownloadTargets():DownloadTarget[] better flexability

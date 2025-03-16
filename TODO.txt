@@ -1,8 +1,23 @@
-
 Current
 =======
 - Handle pass through args in updater
+- Listener system
+- Progress tracking
+- Delayed alerts
 - Handle pass through args in ps
 ~ Use distribution type when updating
+- Make MSI launcher after initial install
+- Make sure Jar updater didn't break? (it won't have distribution program arg without bat).
+- Build for other platforms
+- TODOs & FIXMEs
+- Cleanup
+- Comments
++ Handle pass through args in updater
++ Use distribution type when updating
 + Add distribution type as a program arg
 + Write ps script that runs the installer, then runs the original launcher
++ Write ps script that runs the installer, then runs the original launcher
+
+Low Priority
+============
+- Portable Updater

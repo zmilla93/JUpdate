@@ -1,8 +1,8 @@
 Current
 =======
 - Make sure the native launcher path file exists before starting the download process!
-- Have periodic check clear cache
-- Delayed alerts
++ Have periodic check clear cache
++ Delayed alerts
 - Silent Param (for update on close)
 ~ Listener system
 + Progress tracking

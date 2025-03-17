@@ -203,7 +203,7 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
      * Use an [UpdateCheckListener] to listen for new update events.
      */
     fun runPeriodicUpdateCheck(delay: Int, timeUnit: TimeUnit) {
-        logger.info("Scheduling an update check to run in $delay ${timeUnit}(s).")
+        logger.info("Scheduling an update check to run in $delay ${timeUnit}.")
         scheduler.schedule(Runnable {
             logger.info("Running periodic update check...")
             val update = isUpdateAvailable(true)

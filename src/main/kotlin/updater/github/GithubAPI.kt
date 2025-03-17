@@ -142,10 +142,9 @@ class GithubAPI(
                 .GET()
                 .build();
             val response: HttpResponse<InputStream> = client.send(request, HttpResponse.BodyHandlers.ofInputStream())
-            logger.info("Reponse code: " + response.statusCode())
-            logger.info("Location: " + response.headers().firstValue("Location"))
+            logger.info("\tReponse code: " + response.statusCode())
             val fileSize: Long = response.headers().firstValueAsLong("Content-Length").orElse(-1)
-            logger.info("File size: $fileSize")
+            logger.info("\tDownload Size: $fileSize bytes")
             val inputStream = BufferedInputStream(response.body())
             val outputStream = BufferedOutputStream(Files.newOutputStream(destination))
             val data = ByteArray(BYTE_BUFFER_SIZE)
@@ -169,10 +168,10 @@ class GithubAPI(
             outputStream.close()
             for (listener in progressListeners)
                 SwingUtilities.invokeLater(listener::onDownloadComplete)
-            logger.info("File downloaded successfully!")
+            logger.info("\tFile downloaded successfully!")
             return true
         } catch (e: IOException) {
-            logger.error("Error downloading file: $source")
+            logger.error("\tFailed to download file: $source")
             e.printStackTrace()
             for (listener in progressListeners)
                 SwingUtilities.invokeLater(listener::onDownloadFailed)

@@ -183,5 +183,4 @@ Write-Host "msi      : $( "{0:N2}" -f $msiTime.TotalSeconds )s"
 Write-Host $sep
 Write-Host "Total  : $( "{0:N2}" -f $stopwatch.Elapsed.TotalSeconds )s"
 Write-Host $sep
-Write-Host ""
 Write-Host "You can close this window."

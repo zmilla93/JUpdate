@@ -1,5 +1,6 @@
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 $mavenOutput = $true
+$author = "zmilla"
 
 $failed = $false
 $failedJDeps = $false
@@ -18,9 +19,25 @@ $pomTime = Measure-Command {
     $APP_NAME = $pom.project.artifactId
     $APP_VERSION = $pom.project.version
     $MAIN_CLASS = $pom.project.properties."main-class"
-    $test = $pom.nope
     $JAVA_VERSION = $pom.project.properties."java-version"
 }
+if (!$APP_NAME)
+{
+    throw("Main class is not set!")
+}
+if (!$APP_VERSION)
+{
+    throw("Main class is not set!")
+}
+if (!$MAIN_CLASS)
+{
+    throw("Main class is not set!")
+}
+if (!$JAVA_VERSION)
+{
+    throw("Java version is not set!")
+}
+
 Write-Host "$( "{0:N3}" -f $pomTime.TotalSeconds )s"
 Write-Host "`tJava : $JAVA_VERSION"
 Write-Host "`tApp  : $APP_NAME v$APP_VERSION"
@@ -40,9 +57,12 @@ else
 if ($LASTEXITCODE -ne 0)
 {
     mvn clean
-    if($LASTEXITCODE -eq 0){
+    if ($LASTEXITCODE -eq 0)
+    {
         throw("Failed to build JAR, but project was successfully cleaned. Make sure the project builds locally before building for distribution.")
-    }else{
+    }
+    else
+    {
         throw("Failed to clean project. Make sure no other programs are using the 'target' folder, then try again.")
     }
 }
@@ -75,8 +95,8 @@ if ($LASTEXITCODE -ne 0)
 Write-Host "Building Windows Portable... " -NoNewline
 $portableTime = Measure-Command {
     jpackage --type app-image `
-    --name JUpdater `
-    --main-jar JUpdate.jar `
+    --name $APP_NAME `
+    --main-jar "$APP_NAME.jar" `
     --main-class $MAIN_CLASS `
     --runtime-image target/jre `
     --input target/jar `
@@ -97,7 +117,7 @@ Write-Host "Building Windows Installer... " -NoNewLine
 $msiTime = Measure-Command {
     jpackage --type msi `
     --name "$APP_NAME" `
-    --vendor zmilla93 `
+    --vendor $author `
     --main-jar "$APP_NAME.jar" `
     --main-class $MAIN_CLASS `
     --app-version $APP_VERSION `
@@ -122,10 +142,13 @@ if ($LASTEXITCODE -ne 0)
 
 $title
 $successPrefix = "> "
-$failPrefix =    "[FAILURE] >>>>>>>>>>>>>>>>>>>> "
-if($failed){
+$failPrefix = "[FAILURE] >>>>>>>>>>>>>>>>>>>> "
+if ($failed)
+{
     $title = "BUILD FAILED >:("
-}else {
+}
+else
+{
     $title = "Build Success :)"
 }
 
@@ -139,18 +162,26 @@ Write-Host $successPrefix -NoNewLine
 Write-Host "jdeps    : $( "{0:N2}" -f $jdepsTime.TotalSeconds )s"
 Write-Host $successPrefix -NoNewLine
 Write-Host "jre      : $( "{0:N2}" -f $jlinkTime.TotalSeconds )s"
-if($failedWinPortable) {
+if ($failedWinPortable)
+{
     Write-Host $failPrefix -NoNewLine
-}else{
+}
+else
+{
     Write-Host $successPrefix -NoNewLine
 }
 Write-Host "portable : $( "{0:N2}" -f $portableTime.TotalSeconds )s"
-if($failedWinMSI) {
+if ($failedWinMSI)
+{
     Write-Host $failPrefix -NoNewLine
-}else{
+}
+else
+{
     Write-Host $successPrefix -NoNewLine
 }
 Write-Host "msi      : $( "{0:N2}" -f $msiTime.TotalSeconds )s"
 Write-Host $sep
 Write-Host "Total  : $( "{0:N2}" -f $stopwatch.Elapsed.TotalSeconds )s"
 Write-Host $sep
+Write-Host ""
+Write-Host "You can close this window."

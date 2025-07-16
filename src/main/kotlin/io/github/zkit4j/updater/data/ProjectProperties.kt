@@ -8,7 +8,7 @@ import java.util.*
 /**
  * Handles reading a [Properties] file.
  */
-class ProjectProperties(fileName: String = "project.properties") {
+class ProjectProperties private constructor(fileName: String = "project.properties") {
 
     var version: String = ""
     val logger = LoggerFactory.getLogger(javaClass)
@@ -25,6 +25,12 @@ class ProjectProperties(fileName: String = "project.properties") {
             version = properties.getProperty("version")
         } catch (e: IOException) {
             logger.error("Properties not found! Create a 'project.properties' file in the resources folder, then add the lines 'version=\${project.version}' and 'artifactId=\${project.artifactId}'.")
+        }
+    }
+
+    companion object {
+        fun fromFile(fileName: String = "project.properties"): ProjectProperties {
+            return ProjectProperties(fileName)
         }
     }
 

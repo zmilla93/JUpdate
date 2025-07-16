@@ -52,8 +52,7 @@ abstract class Updater(argsArr: Array<String>, val config: UpdaterConfig) {
     // FIXME : Switch to generic "ProgressListener" that also passes a phase parameter
     val downloadProgressListeners = ArrayList<DownloadProgressListener>()
     val updatePhaseListeners = ArrayList<UpdatePhaseListener>()
-    private val nativeLauncherPath: Path =
-        UpdateUtil.Companion.getWorkingDirectory().resolve(config.nativeExecutableName)
+    private val nativeLauncherPath: Path = UpdateUtil.getWorkingDirectory().resolve(config.nativeExecutableName)
 
     companion object {
         const val LAUNCHER_PREFIX = "--launcher:"

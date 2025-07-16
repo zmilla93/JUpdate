@@ -8,7 +8,9 @@ class MSIUpdater(args: Array<String>, config: UpdaterConfig, githubConfig: GitHu
     }
 
     override fun unpack(): Boolean {
-        return UpdateUtil.Companion.copyResourceToDisk(patcher, config.tempDirectory)
+        return UpdateUtil.Companion.copyResourceToDisk(patcher, config.tempDirectory) {
+            it.replace("{{APP_NAME_REPLACEMENT}}", config.patcherFileName)
+        }
     }
 
     override fun runPatch() {

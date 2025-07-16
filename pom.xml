@@ -6,7 +6,7 @@
 
     <groupId>io.github.zkit4j</groupId>
     <artifactId>zkit4j-update</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.1</version>
 
     <properties>
         <main-class>io.github.zkit4j.Main</main-class>
@@ -23,12 +23,16 @@
             <id>mavenCentral</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
+        <repository>
+            <id>zkit4j-core</id>
+            <url>https://maven.pkg.github.com/zkit4j/zkit4j-core</url>
+        </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>zkit4j-core</name>
+            <name>zkit4j-update</name>
             <url>https://maven.pkg.github.com/zkit4j/zkit4j-update</url>
         </repository>
     </distributionManagement>
@@ -147,7 +151,12 @@
             <artifactId>gson</artifactId>
             <version>2.12.1</version>
         </dependency>
-
+        <!-- https://github.com/zkit4j/zkit4j-core/ -->
+        <dependency>
+            <groupId>io.github.zkit4j</groupId>
+            <artifactId>zkit4j-core</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 
 </project>

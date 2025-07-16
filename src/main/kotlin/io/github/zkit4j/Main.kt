@@ -1,13 +1,12 @@
 package io.github.zkit4j
 
-import io.github.zkit4j.updater.data.AppVersion
 import io.github.zkit4j.gui.MainFrame
 import io.github.zkit4j.gui.ProgressFrame
 import io.github.zkit4j.updater.core.GitHubConfig
-import io.github.zkit4j.updater.core.JarUpdater
 import io.github.zkit4j.updater.core.MSIUpdater
 import io.github.zkit4j.updater.core.Updater
 import io.github.zkit4j.updater.core.UpdaterConfig
+import io.github.zkit4j.updater.data.AppVersion
 import io.github.zkit4j.updater.data.DistributionType
 import io.github.zkit4j.updater.data.ProjectProperties
 import org.slf4j.LoggerFactory
@@ -29,12 +28,10 @@ class Main {
             println("App Launched: ${args.joinToString(prefix = "[", postfix = "]", separator = ",")}")
             val javaVersion = System.getProperty("java.version")
             println("Java version: $javaVersion")
-            val properties = ProjectProperties()
+            val properties = ProjectProperties.fromFile()
             val version = AppVersion(properties.version)
             logger.info("Current Version: " + properties.version)
             handleUpdateProcess(args, version)
-
-
 
 
             SwingUtilities.invokeLater {
@@ -49,6 +46,7 @@ class Main {
 fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
     // FIXME @important : Use app name from pom
     val updater = createUpdater(args, currentVersion)
+//    val updater = GitHubUpdater.createUpdater(args, currentVersion)
     if (updater == null) {
         System.err.println("Updater is null!")
         return
@@ -73,18 +71,22 @@ fun handleUpdateProcess(args: Array<String>, currentVersion: AppVersion) {
 
 /** Create an updater based on the distribution type. */
 fun createUpdater(args: Array<String>, currentVersion: AppVersion): Updater? {
-    val jarName = "JUpdate.jar"
-    val msiName = "JUpdate-win-installer.msi"
-    val githubConfig = GitHubConfig("zmilla93", "JUpdate")
+
     // FIXME : TEMP DIR
     val tempDir = Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp\\")
-    val jarConfig = UpdaterConfig(jarName, currentVersion, arrayOf(jarName), jarName, tempDir)
+
+
+    val githubConfig = GitHubConfig("zmilla93", "JUpdate")
+//    val jarName = "zkit4j-.jar"
+    val msiName = "zkit4j-update.msi"
+
+//    val jarConfig = UpdaterConfig(jarName, currentVersion, arrayOf(jarName), jarName, tempDir)
     val msiConfig = UpdaterConfig("JUpdate.exe", currentVersion, arrayOf(msiName), msiName, tempDir)
     val distributionType = DistributionType.Companion.getTypeFromArgs(args)
     return when (distributionType) {
         DistributionType.NONE -> null
         DistributionType.WIN_MSI -> MSIUpdater(args, msiConfig, githubConfig)
-        DistributionType.JAR -> JarUpdater(args, jarConfig, githubConfig)
+//        DistributionType.JAR -> JarUpdater(args, jarConfig, githubConfig)
         else -> null
     }
 

@@ -1,10 +1,11 @@
 package io.github.zkit4j.updater.core
 
 import org.slf4j.LoggerFactory
-import java.io.*
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
 import java.net.URISyntaxException
 import java.net.http.HttpClient
-import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -12,6 +13,7 @@ import java.security.SecureRandom
 import java.util.regex.Matcher
 import javax.net.ssl.SSLContext
 import javax.swing.JOptionPane
+import kotlin.io.path.bufferedWriter
 
 class UpdateUtil {
 
@@ -54,9 +56,9 @@ class UpdateUtil {
         }
 
         // FIXME : Make this work with nested resources, and with/without starting slash
-        fun copyResourceToDisk(sourceStr: String, destination: Path): Boolean {
+        fun copyResourceToDisk(sourceStr: String, destination: Path, transform: (String) -> String = { it }): Boolean {
             val prefix = if (sourceStr.startsWith("/")) "" else "/"
-            val stream: InputStream =
+            val input: InputStream =
                 UpdateUtil::class.java.getResourceAsStream(prefix + sourceStr)
                     ?: throw java.lang.RuntimeException("Resource not found: $sourceStr")
             try {
@@ -64,15 +66,24 @@ class UpdateUtil {
                 println("Creating Dir: " + destination.parent)
                 val dir = Files.createDirectories(destination.parent)
                 println("Result dir: " + dir)
-                val reader = BufferedReader(InputStreamReader(stream, StandardCharsets.UTF_8))
+//                val reader = BufferedReader(InputStreamReader(stream, StandardCharsets.UTF_8))
                 val output = destination.resolve(sourceStr)
                 println("dest: $destination")
                 println("src: $sourceStr")
                 println("out: $output")
-                val writer = Files.newOutputStream(output).bufferedWriter(StandardCharsets.UTF_8)
-                while (reader.ready()) writer.write(reader.readLine() + "\n")
-                reader.close()
-                writer.close()
+
+                input.bufferedReader().use { reader ->
+                    output.bufferedWriter().use { writer ->
+                        reader.lines().forEach {
+                            writer.write(transform.invoke(it))
+                        }
+                    }
+                }
+
+//                val writer = Files.newOutputStream(output).bufferedWriter(StandardCharsets.UTF_8)
+//                while (reader.ready()) writer.write(reader.readLine() + "\n")
+//                reader.close()
+//                writer.close()
                 return true
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -80,6 +91,33 @@ class UpdateUtil {
             }
             return false
         }
+
+//        fun copyResourceToDisk(sourceStr: String, destination: Path, transform: (String) -> String): Boolean {
+//            val prefix = if (sourceStr.startsWith("/")) "" else "/"
+//            val stream: InputStream =
+//                UpdateUtil::class.java.getResourceAsStream(prefix + sourceStr)
+//                    ?: throw java.lang.RuntimeException("Resource not found: $sourceStr")
+//            try {
+//                println("Resource: " + sourceStr)
+//                println("Creating Dir: " + destination.parent)
+//                val dir = Files.createDirectories(destination.parent)
+//                println("Result dir: " + dir)
+//                val reader = BufferedReader(InputStreamReader(stream, StandardCharsets.UTF_8))
+//                val output = destination.resolve(sourceStr)
+//                println("dest: $destination")
+//                println("src: $sourceStr")
+//                println("out: $output")
+//                val writer = Files.newOutputStream(output).bufferedWriter(StandardCharsets.UTF_8)
+//                while (reader.ready()) writer.write(reader.readLine() + "\n")
+//                reader.close()
+//                writer.close()
+//                return true
+//            } catch (e: IOException) {
+//                e.printStackTrace()
+//                logger.error("IOException while copying resources to disk!")
+//            }
+//            return false
+//        }
 
         fun showErrorMessage(message: String, title: String = "JUpdate Crashed") {
             JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE)

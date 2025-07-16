@@ -7,8 +7,8 @@ $launcher = $null
 $installer = $null
 $launcherPrefix = "--launcher:"
 $installerPrefix = "--installer:"
-# FIXME : Make this dynamic. Use replaceFirst when writing the local patcher file using config.appName.
-$appName = "JUpdater"
+# FIXME  @important : Make this dynamic. Use replaceFirst when writing the local patcher file using config.appName.
+$appName = "{{APP_NAME_REPLACEMENT}}"
 # Get the launcher and installer paths from the program args
 Write-Host "Arg Count: $( $args.Count )"
 foreach ($arg in $args)

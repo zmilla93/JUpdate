@@ -1,10 +1,8 @@
 package io.github.zkit4j.updater.core
 
 import io.github.zkit4j.updater.data.AppVersion
-import io.github.zkit4j.updater.data.DistributionType
 import io.github.zkit4j.updater.github.GithubAPI
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.system.exitProcess
 
 abstract class GitHubUpdater(
@@ -17,22 +15,22 @@ abstract class GitHubUpdater(
 
     companion object {
         /** Create an updater based on the distribution type. */
-        fun createUpdater(args: Array<String>, currentVersion: AppVersion): Updater? {
-            val jarName = "JUpdate.jar"
-            val msiName = "JUpdate-win-installer.msi"
-            val githubConfig = GitHubConfig("zmilla93", "JUpdate")
-            // FIXME : TEMP DIR
-            val tempDir = Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp\\")
-            val jarConfig = UpdaterConfig(jarName, currentVersion, arrayOf(jarName), jarName, tempDir)
-            val msiConfig = UpdaterConfig("JUpdate.exe", currentVersion, arrayOf(msiName), msiName, tempDir)
-            val distributionType = DistributionType.Companion.getTypeFromArgs(args)
-            return when (distributionType) {
-                DistributionType.NONE -> null
-                DistributionType.WIN_MSI -> MSIUpdater(args, msiConfig, githubConfig)
-                DistributionType.JAR -> JarUpdater(args, jarConfig, githubConfig)
-                else -> null
-            }
-        }
+//        fun createUpdater(args: Array<String>, currentVersion: AppVersion): Updater? {
+//            val jarName = "JUpdate.jar"
+//            val msiName = "JUpdate-win-installer.msi"
+//            val githubConfig = GitHubConfig("zmilla93", "JUpdate")
+//            // FIXME : TEMP DIR
+//            val tempDir = Paths.get("C:\\Users\\zmill\\OneDrive\\Documents\\SimStuff\\temp\\")
+//            val jarConfig = UpdaterConfig(jarName, currentVersion, arrayOf(jarName), jarName, tempDir)
+//            val msiConfig = UpdaterConfig("JUpdate.exe", currentVersion, arrayOf(msiName), msiName, tempDir)
+//            val distributionType = DistributionType.Companion.getTypeFromArgs(args)
+//            return when (distributionType) {
+//                DistributionType.NONE -> null
+//                DistributionType.WIN_MSI -> MSIUpdater(args, msiConfig, githubConfig)
+//                DistributionType.JAR -> JarUpdater(args, jarConfig, githubConfig)
+//                else -> null
+//            }
+//        }
 
     }
 

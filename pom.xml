@@ -6,7 +6,7 @@
 
     <groupId>io.github.zkit4j</groupId>
     <artifactId>zkit4j-update</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 
     <properties>
         <main-class>io.github.zkit4j.Main</main-class>
